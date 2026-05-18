@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="ANTES 04 — placeholder">
+  <defs>
+    <radialGradient id="g4-before" cx="50%" cy="42%" r="70%">
+      <stop offset="0%" stop-color="#352c25" stop-opacity="1"/>
+      <stop offset="55%" stop-color="#352c25" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#06090a" stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="sheen4-before" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#g4-before)"/>
+  <!-- ring -->
+  <g transform="translate(600 420)">
+    <ellipse cx="0" cy="40" rx="220" ry="60" fill="none" stroke="#73624a" stroke-opacity="0.1925" stroke-width="4"/>
+    <circle cx="0" cy="0" r="180" fill="none" stroke="#73624a" stroke-opacity="0.55" stroke-width="6"/>
+    <circle cx="0" cy="-180" r="34" fill="#73624a" fill-opacity="0.4675" stroke="#73624a" stroke-width="3"/>
+    <!-- facetas de la gema (sólo en "después") -->
+    <path d="M -8 -188 L 10 -198 L 6 -176 Z" fill="#fff" fill-opacity="0.18"/>
+  </g>
+  <!-- sheen -->
+  <rect width="1200" height="900" fill="url(#sheen4-before)"/>
+  <!-- label arriba -->
+  <g font-family="Georgia, 'Times New Roman', serif" fill="#73624a">
+    <text x="60" y="120" font-size="38" letter-spacing="14" font-weight="300">ANTES</text>
+    <text x="60" y="158" font-size="18" letter-spacing="6" fill-opacity="0.7">placeholder de desarrollo</text>
+  </g>
+  <!-- número grande inferior derecho -->
+  <text x="1140" y="840" text-anchor="end" font-family="Georgia, 'Times New Roman', serif" font-size="200" font-weight="300" fill="#73624a" fill-opacity="0.25" letter-spacing="6">04</text>
+</svg>

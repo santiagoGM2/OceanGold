@@ -1,0 +1,510 @@
+/* ================================================================
+   Ocean Gold — GoHighLevel Booking Widget Custom CSS
+
+   Paste into: Settings > Calendar > Widget > Custom CSS
+   (or the "Custom CSS" field inside the Funnel block that
+   contains the booking widget iframe)
+
+   Strategy: override GHL's default white/light theme to match
+   Ocean Gold's deep malachite-black background and antique gold
+   accent palette. All overrides use !important because GHL
+   injects its own stylesheet at high specificity.
+
+   Tested against GHL booking widget v2 (leadconnectorhq.com).
+   If GHL updates class names, search for the selector comment
+   to identify which visual element it targets.
+================================================================ */
+
+
+/* ----------------------------------------------------------------
+   ROOT: background, text, and border defaults
+   Targets: the iframe document root and the top-level container
+---------------------------------------------------------------- */
+:root {
+  --og-bg:         #0d1410;  /* deep malachite-black */
+  --og-surface:    #141c18;  /* slightly lifted surface */
+  --og-surface-2:  #1c2620;  /* elevated card */
+  --og-gold:       #c9a84c;  /* antique amber-gold */
+  --og-gold-d:     #8a6f30;  /* darker gold for borders */
+  --og-gold-dim:   #4a3a18;  /* very dim gold for subtle borders */
+  --og-ivory:      #f0ece4;  /* warm ivory — primary text */
+  --og-ivory-2:    #b8b0a0;  /* secondary text */
+  --og-champagne:  #e8dfc8;  /* champagne highlight */
+  --og-font-sans:  'Jost', system-ui, sans-serif;
+  --og-font-serif: 'Cinzel', Georgia, serif;
+}
+
+/* ----------------------------------------------------------------
+   DOCUMENT BODY
+   Targets: <body> of the widget iframe document
+---------------------------------------------------------------- */
+body,
+html,
+.hl-booking-page,
+.hl-booking-wrapper,
+[class*="booking-page"],
+[class*="booking-wrapper"] {
+  background: var(--og-bg) !important;
+  color: var(--og-ivory) !important;
+  font-family: var(--og-font-sans) !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+/* ----------------------------------------------------------------
+   ALL PANELS AND CARDS
+   Targets: calendar panels, time-slot containers, form sections
+---------------------------------------------------------------- */
+.hl-calendar,
+.hl-timeslot-container,
+.booking-slot-container,
+.hl-slot-container,
+.hl-booking-form,
+.hl-confirmation-container,
+[class*="calendar-container"],
+[class*="timeslot"],
+[class*="slot-container"],
+[class*="form-container"],
+[class*="booking-form"],
+[class*="confirmation"] {
+  background: var(--og-surface) !important;
+  border-color: var(--og-gold-dim) !important;
+  color: var(--og-ivory) !important;
+  border-radius: 2px !important;
+}
+
+/* ----------------------------------------------------------------
+   CALENDAR HEADER (month/year title, navigation arrows)
+   Targets: the row showing "May 2026" and prev/next arrows
+---------------------------------------------------------------- */
+.hl-calendar-header,
+[class*="calendar-header"],
+.datepicker-header {
+  background: var(--og-surface) !important;
+  border-bottom: 1px solid var(--og-gold-dim) !important;
+  color: var(--og-champagne) !important;
+  font-family: var(--og-font-serif) !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* ----------------------------------------------------------------
+   CALENDAR NAV ARROWS (< >)
+   Targets: previous/next month navigation buttons
+---------------------------------------------------------------- */
+.hl-calendar-nav,
+[class*="calendar-nav"],
+.datepicker-nav,
+.prev-btn,
+.next-btn {
+  color: var(--og-gold) !important;
+  background: transparent !important;
+  border: none !important;
+  opacity: 0.8 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.hl-calendar-nav:hover,
+[class*="calendar-nav"]:hover,
+.prev-btn:hover,
+.next-btn:hover {
+  opacity: 1 !important;
+  color: var(--og-gold) !important;
+}
+
+/* ----------------------------------------------------------------
+   WEEKDAY LABELS (Mon, Tue, Wed...)
+   Targets: the row of abbreviated day names above the date grid
+---------------------------------------------------------------- */
+.hl-calendar-weekday,
+[class*="weekday"],
+[class*="day-name"] {
+  color: var(--og-gold-d) !important;
+  font-size: 0.68rem !important;
+  letter-spacing: 0.25em !important;
+  font-weight: 400 !important;
+  text-transform: uppercase !important;
+}
+
+/* ----------------------------------------------------------------
+   DATE CELLS — default state
+   Targets: all clickable calendar day numbers
+---------------------------------------------------------------- */
+.hl-calendar-day,
+[class*="calendar-day"],
+[class*="day-cell"],
+.datepicker-day {
+  background: transparent !important;
+  color: var(--og-ivory-2) !important;
+  border-radius: 2px !important;
+  border: 1px solid transparent !important;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
+}
+
+/* ----------------------------------------------------------------
+   DATE CELLS — available (has slots)
+   Targets: days that have booking slots available
+---------------------------------------------------------------- */
+.hl-calendar-day.available,
+[class*="calendar-day"].available,
+[class*="day-cell"].available,
+[class*="has-slots"],
+.hl-calendar-day[data-available="true"] {
+  color: var(--og-ivory) !important;
+  border-color: var(--og-gold-dim) !important;
+}
+
+/* ----------------------------------------------------------------
+   DATE CELLS — hover
+   Targets: any available day on hover
+---------------------------------------------------------------- */
+.hl-calendar-day:hover:not(.disabled):not(.empty),
+[class*="calendar-day"]:hover:not(.disabled),
+[class*="day-cell"]:hover:not(.disabled) {
+  background: rgba(201, 168, 76, 0.1) !important;
+  border-color: var(--og-gold) !important;
+  color: var(--og-champagne) !important;
+  cursor: pointer !important;
+}
+
+/* ----------------------------------------------------------------
+   DATE CELLS — selected / active
+   Targets: the date the user has clicked
+---------------------------------------------------------------- */
+.hl-calendar-day.selected,
+.hl-calendar-day.active,
+[class*="calendar-day"].selected,
+[class*="calendar-day"].active,
+[class*="day-cell"].selected,
+[class*="day-cell"].active,
+[aria-selected="true"] {
+  background: var(--og-gold) !important;
+  color: #0d1410 !important;
+  border-color: var(--og-gold) !important;
+  font-weight: 500 !important;
+}
+
+/* ----------------------------------------------------------------
+   DATE CELLS — today
+   Targets: the current calendar date
+---------------------------------------------------------------- */
+.hl-calendar-day.today,
+[class*="calendar-day"].today,
+[class*="today"] {
+  border-color: var(--og-gold-d) !important;
+  color: var(--og-gold) !important;
+  background: transparent !important;
+}
+
+/* ----------------------------------------------------------------
+   DATE CELLS — disabled / past
+   Targets: past dates or dates with no availability
+---------------------------------------------------------------- */
+.hl-calendar-day.disabled,
+[class*="calendar-day"].disabled,
+[class*="day-cell"].disabled,
+.hl-calendar-day[disabled] {
+  color: rgba(184, 176, 160, 0.2) !important;
+  cursor: not-allowed !important;
+  border-color: transparent !important;
+}
+
+/* ----------------------------------------------------------------
+   TIME SLOT BUTTONS
+   Targets: individual hour/time selection chips
+---------------------------------------------------------------- */
+.hl-time-slot,
+[class*="time-slot"],
+[class*="timeslot-btn"],
+[class*="slot-btn"],
+.booking-slot {
+  background: var(--og-surface-2) !important;
+  border: 1px solid var(--og-gold-dim) !important;
+  color: var(--og-ivory) !important;
+  border-radius: 2px !important;
+  font-family: var(--og-font-sans) !important;
+  font-size: 0.82rem !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.06em !important;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease !important;
+}
+
+.hl-time-slot:hover,
+[class*="time-slot"]:hover,
+[class*="timeslot-btn"]:hover,
+.booking-slot:hover {
+  background: rgba(201, 168, 76, 0.1) !important;
+  border-color: var(--og-gold) !important;
+  color: var(--og-champagne) !important;
+  cursor: pointer !important;
+}
+
+.hl-time-slot.selected,
+.hl-time-slot.active,
+[class*="time-slot"].selected,
+[class*="time-slot"].active {
+  background: var(--og-gold) !important;
+  border-color: var(--og-gold) !important;
+  color: #0d1410 !important;
+}
+
+/* ----------------------------------------------------------------
+   FORM INPUTS (name, email, phone, notes)
+   Targets: text inputs and textareas in the booking form
+---------------------------------------------------------------- */
+.hl-input,
+.hl-form input,
+.hl-form textarea,
+.hl-form select,
+[class*="booking-form"] input,
+[class*="booking-form"] textarea,
+[class*="booking-form"] select,
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+textarea {
+  background: var(--og-surface-2) !important;
+  border: 1px solid var(--og-gold-dim) !important;
+  color: var(--og-ivory) !important;
+  border-radius: 2px !important;
+  font-family: var(--og-font-sans) !important;
+  font-size: 0.88rem !important;
+  font-weight: 300 !important;
+  padding: 0.85rem 1rem !important;
+  transition: border-color 0.25s ease !important;
+}
+
+.hl-input:focus,
+.hl-form input:focus,
+.hl-form textarea:focus,
+[class*="booking-form"] input:focus,
+[class*="booking-form"] textarea:focus {
+  outline: none !important;
+  border-color: var(--og-gold) !important;
+  box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.12) !important;
+}
+
+/* Placeholder text */
+::placeholder {
+  color: rgba(184, 176, 160, 0.4) !important;
+  font-style: italic !important;
+  font-weight: 200 !important;
+}
+
+/* ----------------------------------------------------------------
+   FORM LABELS
+   Targets: <label> elements above each input field
+---------------------------------------------------------------- */
+.hl-label,
+.hl-form label,
+[class*="booking-form"] label,
+[class*="form-label"] {
+  color: var(--og-ivory-2) !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  font-weight: 300 !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+}
+
+/* ----------------------------------------------------------------
+   CONFIRM / SUBMIT BUTTON
+   Targets: the primary "Book Appointment" / "Confirm" CTA
+---------------------------------------------------------------- */
+.hl-submit-btn,
+[class*="submit-btn"],
+[class*="confirm-btn"],
+[class*="book-btn"],
+button[type="submit"],
+.hl-cta-button {
+  background: var(--og-gold) !important;
+  color: #0d1410 !important;
+  border: 1px solid var(--og-gold) !important;
+  border-radius: 2px !important;
+  font-family: var(--og-font-sans) !important;
+  font-size: 0.75rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  padding: 1rem 2.5rem !important;
+  cursor: pointer !important;
+  transition: background 0.3s ease, color 0.3s ease !important;
+  width: 100% !important;
+}
+
+.hl-submit-btn:hover,
+[class*="submit-btn"]:hover,
+[class*="confirm-btn"]:hover,
+button[type="submit"]:hover {
+  background: #b8943e !important;
+  border-color: #b8943e !important;
+}
+
+/* ----------------------------------------------------------------
+   BACK / SECONDARY BUTTON
+   Targets: "Go back" or step-navigation secondary actions
+---------------------------------------------------------------- */
+.hl-back-btn,
+[class*="back-btn"],
+[class*="secondary-btn"] {
+  background: transparent !important;
+  border: 1px solid var(--og-gold-dim) !important;
+  color: var(--og-gold) !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  font-weight: 300 !important;
+  cursor: pointer !important;
+  transition: border-color 0.25s ease, color 0.25s ease !important;
+}
+
+.hl-back-btn:hover,
+[class*="back-btn"]:hover {
+  border-color: var(--og-gold) !important;
+  color: var(--og-champagne) !important;
+}
+
+/* ----------------------------------------------------------------
+   SECTION HEADINGS inside widget
+   Targets: "Select a Date", "Select a Time", "Your Information"
+---------------------------------------------------------------- */
+.hl-section-title,
+[class*="section-title"],
+[class*="step-title"],
+h2, h3 {
+  font-family: var(--og-font-serif) !important;
+  color: var(--og-ivory) !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* ----------------------------------------------------------------
+   STEP PROGRESS INDICATOR (dots or numbered steps)
+   Targets: the multi-step progress track inside the widget
+---------------------------------------------------------------- */
+[class*="step-indicator"],
+[class*="progress-step"],
+[class*="stepper"] {
+  border-color: var(--og-gold-dim) !important;
+  background: transparent !important;
+}
+
+[class*="step-indicator"].active,
+[class*="progress-step"].active {
+  background: var(--og-gold) !important;
+  border-color: var(--og-gold) !important;
+  color: #0d1410 !important;
+}
+
+[class*="step-indicator"].completed,
+[class*="progress-step"].completed {
+  background: var(--og-gold-d) !important;
+  border-color: var(--og-gold-d) !important;
+}
+
+/* ----------------------------------------------------------------
+   TIMEZONE SELECTOR
+   Targets: the timezone dropdown (if displayed)
+---------------------------------------------------------------- */
+[class*="timezone"],
+.hl-timezone-select {
+  background: var(--og-surface-2) !important;
+  border: 1px solid var(--og-gold-dim) !important;
+  color: var(--og-ivory-2) !important;
+  font-size: 0.8rem !important;
+  border-radius: 2px !important;
+}
+
+/* ----------------------------------------------------------------
+   SCROLLBAR inside widget iframe
+   Targets: custom scrollbar to match dark theme
+---------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 4px !important;
+}
+::-webkit-scrollbar-track {
+  background: var(--og-bg) !important;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--og-gold-dim) !important;
+  border-radius: 2px !important;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--og-gold-d) !important;
+}
+
+/* ----------------------------------------------------------------
+   SUCCESS / CONFIRMATION SCREEN
+   Targets: the "You're booked!" confirmation page
+---------------------------------------------------------------- */
+[class*="success"],
+[class*="confirmation-screen"],
+[class*="booking-confirmed"] {
+  background: var(--og-surface) !important;
+  color: var(--og-ivory) !important;
+}
+
+[class*="success-icon"],
+[class*="check-icon"] {
+  color: var(--og-gold) !important;
+  border-color: var(--og-gold) !important;
+}
+
+[class*="success-title"],
+[class*="confirmation-title"] {
+  font-family: var(--og-font-serif) !important;
+  color: var(--og-champagne) !important;
+  font-weight: 300 !important;
+}
+
+[class*="success-subtitle"],
+[class*="confirmation-details"] {
+  color: var(--og-ivory-2) !important;
+  font-weight: 200 !important;
+}
+
+/* ----------------------------------------------------------------
+   MISC: remove box-shadows and white backgrounds that bleed
+   Targets: any remaining white-background elements
+---------------------------------------------------------------- */
+* {
+  box-shadow: none !important;
+}
+
+/* Re-add intentional shadows with brand palette */
+[class*="card"],
+[class*="panel"],
+[class*="container"] {
+  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.08) !important;
+}
+
+/* Remove white flash on load */
+html, body {
+  background-color: #0d1410 !important;
+}
+
+/* ----------------------------------------------------------------
+   TYPOGRAPHY HIERARCHY
+   Targets: all text elements for consistent weight and color
+---------------------------------------------------------------- */
+p, span, div {
+  color: inherit !important;
+}
+
+strong, b {
+  font-weight: 500 !important;
+  color: var(--og-champagne) !important;
+}
+
+/* ----------------------------------------------------------------
+   LINKS
+   Targets: any hyperlinks within the widget
+---------------------------------------------------------------- */
+a {
+  color: var(--og-gold) !important;
+  text-decoration: none !important;
+}
+
+a:hover {
+  color: var(--og-gold-d) !important;
+}

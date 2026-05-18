@@ -1,26 +1,397 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────────────────────
+   Ocean Gold — Sistema de diseño (paleta OKLCH + tokens semánticos)
+   ────────────────────────────────────────────────────────────── */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Paleta cruda (OKLCH) — preservada del v1 */
+  --bg: oklch(6.5% 0.018 158);
+  --bg-1: oklch(10% 0.020 158);
+  --bg-2: oklch(14% 0.022 158);
+  --gold: oklch(65% 0.096 72);
+  --gold-l: oklch(74% 0.072 72);
+  --gold-d: oklch(50% 0.070 72);
+  --gold-dim: oklch(38% 0.045 72);
+  --champagne: oklch(86% 0.026 80);
+  --ivory: oklch(94% 0.010 85);
+  --ivory-2: oklch(78% 0.010 85);
+  --text: oklch(83% 0.010 85);
+
+  /* Tokens semánticos (UI/UX Pro Max) */
+  --surface-0: #0d1410;
+  --surface-1: var(--bg-1);
+  --surface-2: var(--bg-2);
+  --border-subtle: oklch(38% 0.045 72 / 0.18);
+  --border-gold: var(--gold);
+  --text-default: var(--text);
+  --text-muted: var(--ivory-2);
+  --text-strong: var(--ivory);
+  --accent-gold: var(--gold);
+  --accent-gold-soft: oklch(65% 0.096 72 / 0.12);
+  --accent-gold-glow: oklch(65% 0.096 72 / 0.3);
+
+  /* Easing */
+  --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colores expuestos a Tailwind */
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-gold: var(--border-gold);
+  --color-text-default: var(--text-default);
+  --color-text-muted: var(--text-muted);
+  --color-text-strong: var(--text-strong);
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-gold-soft: var(--accent-gold-soft);
+  --color-accent-gold-glow: var(--accent-gold-glow);
+  --color-gold: var(--gold);
+  --color-gold-l: var(--gold-l);
+  --color-gold-d: var(--gold-d);
+  --color-gold-dim: var(--gold-dim);
+  --color-champagne: var(--champagne);
+  --color-ivory: var(--ivory);
+
+  /* Tipografía expuesta a Tailwind */
+  --font-serif: var(--font-cinzel), Georgia, serif;
+  --font-sans: var(--font-jost), system-ui, sans-serif;
+
+  /* Easing */
+  --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--surface-0);
+  color: var(--text-default);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Selección dorada */
+::selection {
+  background: var(--accent-gold-soft);
+  color: var(--text-strong);
+}
+
+/* Focus ring dorado accesible */
+*:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Microinteracciones premium (Fase E.5)
+   ────────────────────────────────────────────────────────────── */
+
+/* `gold-cta` aplica al botón dorado con border-accent-gold:
+   - shine que viaja al hover (gradient lineal claro)
+   - scale 0.97 en :active (Emil's principle) */
+.gold-cta {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.12s cubic-bezier(0.23, 1, 0.32, 1), color 0.3s, background-color 0.3s, border-color 0.3s;
+}
+.gold-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    oklch(94% 0.01 85 / 0.22) 50%,
+    transparent 62%
+  );
+  transform: translateX(-130%);
+  pointer-events: none;
+  transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.gold-cta:hover::after {
+  transform: translateX(130%);
+}
+.gold-cta:active {
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gold-cta::after { display: none; }
+  .gold-cta:active { transform: none; }
+}
+
+/* Icon spin en hover de las cards Situations */
+.icon-spin-on-hover {
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.group:hover .icon-spin-on-hover {
+  transform: rotate(360deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .icon-spin-on-hover { transform: none; }
+}
+
+/* Inputs con focus glow expansivo */
+.gold-focus {
+  transition: border-color 0.25s, box-shadow 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.gold-focus:focus,
+.gold-focus:focus-visible {
+  outline: none !important;
+  border-color: var(--accent-gold);
+  box-shadow:
+    0 0 0 3px oklch(65% 0.096 72 / 0.18),
+    0 0 24px oklch(65% 0.096 72 / 0.25);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gold-focus { transition: none; }
+}
+
+/* Shake sutil para errores de validación */
+@keyframes input-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-3px); }
+  40% { transform: translateX(3px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+}
+.input-shake {
+  animation: input-shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  .input-shake { animation: none; }
+}
+
+/* Reduce-motion: desactivar animaciones globales */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Backdrop multi-capa (Fase E.5): mesh gradient + partículas SVG
+   + vignette. 100% CSS, cero JS, GPU-accelerated.
+   ────────────────────────────────────────────────────────────── */
+.ocean-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--surface-0) 0%, oklch(8% 0.020 158) 100%);
+}
+
+/* Capa 1: mesh gradient con 4 puntos de color que migran lentamente */
+.ocean-mesh {
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(circle at var(--mp1, 18% 12%), oklch(14% 0.022 158 / 0.85), transparent 42%),
+    radial-gradient(circle at var(--mp2, 82% 88%), oklch(10% 0.020 158 / 0.9), transparent 48%),
+    radial-gradient(circle at var(--mp3, 88% 18%), oklch(65% 0.096 72 / 0.05), transparent 35%),
+    radial-gradient(circle at var(--mp4, 12% 78%), oklch(50% 0.07 72 / 0.06), transparent 38%);
+  animation: ocean-mesh-shift 38s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: background-position;
+}
+@keyframes ocean-mesh-shift {
+  0%, 100% {
+    --mp1: 18% 12%;
+    --mp2: 82% 88%;
+    --mp3: 88% 18%;
+    --mp4: 12% 78%;
+  }
+  33% {
+    --mp1: 32% 22%;
+    --mp2: 68% 82%;
+    --mp3: 78% 32%;
+    --mp4: 22% 72%;
+  }
+  66% {
+    --mp1: 12% 24%;
+    --mp2: 90% 78%;
+    --mp3: 82% 8%;
+    --mp4: 18% 86%;
+  }
+}
+/* CSS @property hace que las CSS vars sean interpoladas (no salto) */
+@property --mp1 { syntax: "<percentage>+"; inherits: false; initial-value: 18% 12%; }
+@property --mp2 { syntax: "<percentage>+"; inherits: false; initial-value: 82% 88%; }
+@property --mp3 { syntax: "<percentage>+"; inherits: false; initial-value: 88% 18%; }
+@property --mp4 { syntax: "<percentage>+"; inherits: false; initial-value: 12% 78%; }
+
+/* Capa 2: partículas SVG */
+.ocean-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.og-particle {
+  position: absolute;
+  display: block;
+  /* Dos animaciones: drift (translate Y+X) y pulse (opacidad) */
+  animation:
+    og-drift var(--drift-dur, 40s) cubic-bezier(0.45, 0, 0.55, 1) infinite,
+    og-pulse var(--pulse-dur, 6s) ease-in-out infinite;
+  opacity: var(--opa-from, 0.2);
+  will-change: transform, opacity;
+}
+@keyframes og-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(var(--osc-x, 8px), -25vh, 0);
+  }
+  50% {
+    transform: translate3d(calc(var(--osc-x, 8px) * -0.6), -50vh, 0);
+  }
+  75% {
+    transform: translate3d(var(--osc-x, 8px), -75vh, 0);
+  }
+  100% {
+    transform: translate3d(0, -100vh, 0);
+  }
+}
+@keyframes og-pulse {
+  0%, 100% { opacity: var(--opa-from, 0.15); }
+  50% { opacity: var(--opa-to, 0.4); }
+}
+
+/* Desktop muestra 50 partículas; móvil sólo 18 */
+.ocean-particles-mobile { display: none; }
+@media (max-width: 767px) {
+  /* Mobile: sólo mesh estático + vignette. Las partículas y la animación
+     del mesh cuestan ~5-10 puntos Lighthouse en CPU móvil throttled. */
+  .ocean-particles-desktop,
+  .ocean-particles-mobile { display: none; }
+  .ocean-mesh { animation: none; }
+}
+
+/* Capa 3: vignette radial para enfocar el centro */
+.ocean-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 35%,
+    oklch(4% 0.015 158 / 0.45) 100%
+  );
+  pointer-events: none;
+}
+
+/* Reduced motion: estático, sin partículas */
+@media (prefers-reduced-motion: reduce) {
+  .ocean-mesh { animation: none; }
+  .og-particle, .og-particle-mobile {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Pulso dorado del CTA (cada 5s). Sutil, no molesto. */
+@keyframes gold-pulse {
+  0%, 88%, 100% {
+    box-shadow: 0 0 0 0 oklch(65% 0.096 72 / 0);
+  }
+  90% {
+    box-shadow: 0 0 0 4px oklch(65% 0.096 72 / 0.18),
+      0 0 32px oklch(65% 0.096 72 / 0.35);
+  }
+  95% {
+    box-shadow: 0 0 0 8px oklch(65% 0.096 72 / 0),
+      0 0 18px oklch(65% 0.096 72 / 0);
+  }
+}
+.cta-pulse {
+  animation: gold-pulse 5s var(--ease-brand) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-pulse {
+    animation: none;
+  }
+}
+
+/* Glow estático para el dato destacado de Alert */
+.gold-glow {
+  text-shadow:
+    0 0 28px oklch(65% 0.096 72 / 0.55),
+    0 0 56px oklch(65% 0.096 72 / 0.25);
+}
+
+/* Glow pulsante para el "60%" del Alert (Fase E.5) */
+@keyframes gold-glow-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 24px oklch(65% 0.096 72 / 0.45),
+      0 0 48px oklch(65% 0.096 72 / 0.18);
+  }
+  50% {
+    text-shadow:
+      0 0 36px oklch(65% 0.096 72 / 0.75),
+      0 0 72px oklch(65% 0.096 72 / 0.35);
+  }
+}
+.gold-glow-pulse {
+  animation: gold-glow-pulse 3.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gold-glow-pulse { animation: none; }
+}
+
+/* Authority: punto dorado que se expande detrás del stat. Se dispara cuando
+   el data-revealed se pone en "true" desde JS (motion whileInView). */
+.stat-spotlight {
+  position: relative;
+  overflow: hidden;
+}
+.stat-spotlight::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: oklch(65% 0.096 72);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  filter: blur(8px);
+  pointer-events: none;
+}
+.stat-spotlight[data-revealed="true"]::before {
+  animation: stat-spotlight-expand 1.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+@keyframes stat-spotlight-expand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(28);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stat-spotlight[data-revealed="true"]::before { animation: none; }
 }

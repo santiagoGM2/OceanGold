@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Restauración, transformación y personalización de joyas de autor. Diagnóstico gratuito en Bogotá.">
+  <title>Ocean Gold — El Renacimiento de tu Joya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;500;600&family=Jost:ital,wght@0,200;0,300;0,400;0,500;1,200;1,300&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg:        oklch(6.5% 0.018 158);
+  --bg-1:      oklch(10%  0.020 158);
+  --bg-2:      oklch(14%  0.022 158);
+  --gold:      oklch(65%  0.096 72);
+  --gold-l:    oklch(74%  0.072 72);
+  --gold-d:    oklch(50%  0.070 72);
+  --gold-dim:  oklch(38%  0.045 72);
+  --champagne: oklch(86%  0.026 80);
+  --ivory:     oklch(94%  0.010 85);
+  --ivory-2:   oklch(78%  0.010 85);
+  --text:      oklch(83%  0.010 85);
+  --serif:     'Cinzel', Georgia, serif;
+  --sans:      'Jost', system-ui, sans-serif;
+  --ease:      cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0 }
+html { scroll-behavior: smooth; overflow-x: hidden }
+body { background: #0d1410; color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.7; overflow-x: hidden; -webkit-font-smoothing: antialiased }
+
+/* ── GEMVERSE CANVAS ── */
+#bg-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none }
+
+/* ── SCROLL PROGRESS ── */
+#scroll-progress { position: fixed; top: 0; left: 0; height: 2px; width: 0%; background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-l)); z-index: 9999; pointer-events: none; transition: width .08s linear }
+
+/* ── FLOATING BUTTONS ── */
+.floating-buttons { position: fixed; bottom: 2rem; right: 1.5rem; display: flex; flex-direction: column; gap: .65rem; z-index: 800 }
+.float-btn { display: flex; align-items: center; gap: .65rem; padding: .8rem 1.05rem; border: 1px solid var(--gold-dim); border-radius: 4rem; background: rgba(13,20,16,0.85); backdrop-filter: blur(10px); color: var(--gold); font-family: var(--sans); font-size: .75rem; font-weight: 400; letter-spacing: .06em; text-decoration: none; cursor: pointer; overflow: hidden; white-space: nowrap; max-width: 3.25rem; transition: max-width .45s var(--ease), background .3s, border-color .3s, box-shadow .3s; animation: float-pulse 3.5s ease-in-out infinite }
+@keyframes float-pulse { 0%,100% { box-shadow: 0 0 14px rgba(201,168,76,.12), 0 0 30px rgba(201,168,76,.06) } 50% { box-shadow: 0 0 22px rgba(201,168,76,.28), 0 0 44px rgba(201,168,76,.14) } }
+.float-btn:hover { max-width: 16rem; background: rgba(20,28,24,0.95); border-color: var(--gold); box-shadow: 0 0 28px rgba(201,168,76,.3), 0 0 56px rgba(201,168,76,.14) }
+.float-icon { width: 1.2rem; height: 1.2rem; flex-shrink: 0 }
+
+/* ── BASE STACKING (keep sections above fixed canvas) ── */
+.hero, .proof, .services, .testimonials, .urgency, .conversion, .trust, footer {
+  position: relative; z-index: 1;
+}
+
+/* ── HERO (transparent — canvas is the sky) ── */
+.hero { min-height: 100svh; display: flex; flex-direction: column; overflow: hidden; background: transparent }
+.hero-geometry { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden }
+.scan-line { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,.35), rgba(201,168,76,.6), rgba(201,168,76,.35), transparent); z-index: 4; opacity: 0; top: 40% }
+.hero-nav { position: absolute; top: 0; left: 0; right: 0; padding: 2.25rem 3.5rem; z-index: 10; display: flex; align-items: center; justify-content: space-between }
+.logo { display: flex; align-items: center; gap: .9rem; text-decoration: none; opacity: 0 }
+.logo-wordmark { font-family: var(--serif); font-size: .95rem; font-weight: 400; letter-spacing: .35em; color: var(--champagne); text-transform: uppercase }
+.hero-content { position: relative; z-index: 5; margin-top: auto; margin-bottom: auto; padding: 11rem 3.5rem 6rem; max-width: 1200px }
+.hero-label { font-size: .68rem; font-weight: 300; letter-spacing: .38em; color: var(--gold); text-transform: uppercase; margin-bottom: 2.5rem; display: block; opacity: 0; transform: translateY(12px) }
+.hero-title { font-family: var(--serif); font-size: clamp(2.4rem, 5.2vw, 6rem); font-weight: 300; line-height: 1.05; color: var(--ivory); margin-bottom: 2.75rem; letter-spacing: .02em }
+.hero-title em { font-style: italic; color: var(--champagne) }
+.line { display: block; overflow: hidden }
+.line-inner { display: block; transform: translateY(110%); will-change: transform }
+.hero-sub { font-size: clamp(.95rem, 1.6vw, 1.1rem); font-weight: 200; color: var(--ivory-2); max-width: 48ch; margin-bottom: 3.5rem; line-height: 1.9; opacity: 0; transform: translateY(12px); letter-spacing: .02em }
+.hero-cta { display: inline-flex; align-items: center; gap: 1.1rem; padding: 1.05rem 2.75rem; border: 1px solid var(--gold); color: var(--gold); font-family: var(--sans); font-size: .72rem; font-weight: 400; letter-spacing: .25em; text-transform: uppercase; text-decoration: none; position: relative; overflow: hidden; opacity: 0; transform: translateY(12px); transition: color .35s ease }
+.hero-cta::before { content: ''; position: absolute; inset: 0; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .4s var(--ease) }
+.hero-cta:hover { color: var(--bg) } .hero-cta:hover::before { transform: scaleX(1) }
+.hero-cta-text { position: relative; z-index: 1 }
+.hero-diagonal { position: absolute; bottom: -2px; left: 0; right: 0; z-index: 6 }
+
+/* ── PROOF ── */
+.proof { background: rgba(13,20,16,0.93); padding: 4.5rem 3.5rem; display: flex; align-items: stretch }
+.proof::before { content: ''; position: absolute; bottom: 0; left: 3.5rem; right: 3.5rem; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent) }
+.proof-item { flex: 1; text-align: center; padding: 1rem 2rem }
+.proof-item + .proof-item { border-left: 1px solid rgba(201,168,76,.1) }
+.proof-num { font-family: var(--serif); font-size: clamp(2.2rem, 4.5vw, 3.5rem); font-weight: 300; color: var(--gold); display: block; line-height: 1; letter-spacing: .02em }
+.proof-label { font-size: .67rem; letter-spacing: .28em; text-transform: uppercase; color: var(--ivory-2); display: block; margin-top: .6rem; font-weight: 300 }
+
+/* ── SERVICES ── */
+.services { padding: 8rem 3.5rem; background: rgba(13,20,16,0.88) }
+.services::before { content: ''; position: absolute; top: 0; left: 3.5rem; right: 3.5rem; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent) }
+.services-header { margin-bottom: 5rem }
+.section-eyebrow { font-size: .67rem; letter-spacing: .4em; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 1.75rem; font-weight: 300 }
+.section-title { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 300; color: var(--ivory); line-height: 1.08; letter-spacing: .02em }
+.section-title em { font-style: italic; color: var(--champagne) }
+.services-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px }
+.service-card { background: rgba(20,28,24,0.96); padding: 3.5rem 2.75rem 3rem; cursor: pointer; overflow: hidden; transition: background .4s ease, transform .4s var(--ease) }
+.service-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--gold-dim), var(--gold-l), var(--gold-dim)); transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease) }
+.service-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(201,168,76,.04), transparent); opacity: 0; transition: opacity .4s ease }
+.service-gleam { position: absolute; top: 0; bottom: 0; width: 60%; background: linear-gradient(105deg, transparent 30%, rgba(201,168,76,.08) 50%, transparent 70%); transform: translateX(-150%); transition: none; pointer-events: none }
+.service-card:hover { background: rgba(28,38,32,0.99); transform: translateY(-4px) }
+.service-card:hover::before { transform: scaleX(1) }
+.service-card:hover::after { opacity: 1 }
+.service-card:hover .service-gleam { transform: translateX(250%); transition: transform .7s ease }
+.service-index { font-family: var(--serif); font-size: 4rem; font-weight: 300; color: var(--gold-dim); opacity: .3; line-height: 1; margin-bottom: 1.75rem; letter-spacing: .02em; transition: opacity .3s, color .3s }
+.service-card:hover .service-index { opacity: .55; color: var(--gold-d) }
+.service-name { font-family: var(--serif); font-size: 1.6rem; font-weight: 400; color: var(--ivory); margin-bottom: .75rem; letter-spacing: .04em }
+.service-tagline { font-family: var(--sans); font-size: .82rem; font-style: italic; color: var(--gold); margin-bottom: 1.25rem; font-weight: 300; letter-spacing: .04em }
+.service-desc { font-size: .88rem; font-weight: 200; color: var(--ivory-2); line-height: 1.9; max-width: 30ch }
+.service-link { display: inline-flex; align-items: center; gap: .5rem; margin-top: 2rem; font-size: .67rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); text-decoration: none; font-weight: 400; opacity: 0; transform: translateX(-8px); transition: opacity .35s, transform .35s }
+.service-card:hover .service-link { opacity: 1; transform: translateX(0) }
+
+/* ── TESTIMONIALS ── */
+.testimonials { padding: 8rem 3.5rem; overflow: hidden; background: rgba(13,20,16,0.85) }
+.testimonials::before { content: ''; position: absolute; top: 0; left: 3.5rem; right: 3.5rem; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent) }
+.testimonials-header { margin-bottom: 5rem; max-width: 600px; margin-left: 4rem }
+.testimonials-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; align-items: start }
+.testimonial-card { padding: 3.25rem 2.5rem; background: rgba(20,28,24,0.97); overflow: hidden; border-top: 1px solid rgba(201,168,76,.15); transition: border-color .5s ease }
+.testimonial-card.lit { border-top-color: var(--gold-d) }
+.testimonial-card:nth-child(2) { margin-top: 3.5rem }
+.testimonial-card:nth-child(3) { margin-top: 1.75rem }
+.t-mark { font-family: var(--serif); font-size: 3rem; color: var(--gold-d); line-height: .8; margin-bottom: 1.25rem; opacity: .4; display: block }
+.t-text { font-size: .9rem; font-style: italic; font-weight: 200; color: var(--ivory); line-height: 1.95; margin-bottom: 2rem }
+.t-author { display: flex; align-items: center; gap: 1rem }
+.t-avatar { width: 44px; height: 44px; background: var(--bg-2); border: 1px solid var(--gold-dim); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: .85rem; font-weight: 400; color: var(--gold); flex-shrink: 0; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%) }
+.t-name { font-size: .8rem; font-weight: 400; color: var(--champagne); letter-spacing: .06em; display: block }
+.t-role { font-size: .7rem; color: var(--ivory-2); opacity: .5; font-weight: 200; font-style: italic }
+
+/* ── URGENCY (let canvas bleed through dramatically) ── */
+.urgency { padding: 7rem 3.5rem; overflow: hidden; text-align: center; background: rgba(13,20,16,0.18) }
+.urgency-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(201,168,76,.09), transparent); pointer-events: none }
+.urgency-inner { max-width: 680px; margin: 0 auto; position: relative; z-index: 1 }
+.urgency-eyebrow { font-size: .67rem; letter-spacing: .4em; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 2.25rem; font-weight: 300 }
+.urgency-headline { font-family: var(--serif); font-size: clamp(1.6rem, 3.2vw, 2.8rem); font-weight: 300; color: var(--ivory); line-height: 1.2; margin-bottom: 2rem; letter-spacing: .02em }
+.urgency-message { font-size: .95rem; color: var(--ivory-2); font-weight: 200; line-height: 1.9; margin-bottom: 3rem }
+.urgency-cta { display: inline-flex; align-items: center; gap: 1rem; padding: 1.05rem 3rem; border: 1px solid var(--gold); color: var(--gold); text-decoration: none; font-family: var(--sans); font-size: .72rem; font-weight: 400; letter-spacing: .25em; text-transform: uppercase; position: relative; overflow: hidden; transition: color .35s ease }
+.urgency-cta::before { content: ''; position: absolute; inset: 0; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .4s var(--ease) }
+.urgency-cta:hover { color: var(--bg) } .urgency-cta:hover::before { transform: scaleX(1) }
+.urgency-cta span { position: relative; z-index: 1 }
+
+/* ── CONVERSION FLOW ── */
+.conversion { padding: 9rem 3.5rem; background: rgba(13,20,16,0.93) }
+.conversion::before { content: ''; position: absolute; top: 0; left: 3.5rem; right: 3.5rem; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent) }
+.conversion-header { text-align: center; margin-bottom: 5rem }
+.step-track { display: flex; align-items: center; justify-content: center; margin-bottom: 5rem }
+.step-node { display: flex; flex-direction: column; align-items: center; gap: .6rem }
+.step-dot { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--gold-dim); background: transparent; transition: background .35s, border-color .35s, box-shadow .35s }
+.step-node.active .step-dot { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 0 4px rgba(201,168,76,.15), 0 0 12px var(--gold) }
+.step-node.done .step-dot { background: var(--gold-d); border-color: var(--gold-d) }
+.step-label { font-size: .6rem; letter-spacing: .3em; text-transform: uppercase; color: var(--ivory-2); opacity: .4; transition: opacity .35s, color .35s; font-weight: 300 }
+.step-node.active .step-label { opacity: 1; color: var(--gold) }
+.step-node.done .step-label { opacity: .6 }
+.step-connector { height: 1px; width: 5rem; background: var(--gold-dim); opacity: .25; margin-bottom: 1.75rem; transition: opacity .35s }
+.step-node.done + .step-connector { opacity: .6 }
+.conversion-step { max-width: 720px; margin: 0 auto }
+.conversion-step.hidden { display: none }
+
+.upload-area { border: 1px dashed rgba(201,168,76,.3); padding: 5.5rem 3rem; text-align: center; cursor: pointer; position: relative; transition: border-color .35s, background .35s; background: rgba(10,16,14,.5); clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)) }
+.upload-area:hover, .upload-area.drag-over { border-color: var(--gold); background: rgba(14,20,18,.75) }
+.upload-icon { color: var(--gold-d); margin-bottom: 2rem }
+.upload-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 300; color: var(--ivory); margin-bottom: .5rem; letter-spacing: .04em }
+.upload-subtitle { font-size: .9rem; font-style: italic; color: var(--champagne); margin-bottom: .75rem; font-weight: 200 }
+.upload-hint { font-size: .75rem; color: var(--ivory-2); opacity: .5; font-weight: 200 }
+.upload-preview { display: none; margin-top: 2rem }
+.upload-preview img { max-width: 180px; max-height: 180px; object-fit: cover; border: 1px solid var(--gold-d); filter: brightness(.85) saturate(.9); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)) }
+#file-input { display: none }
+.photo-received { display: none; text-align: center; padding: 2rem; border: 1px solid rgba(201,168,76,.2); background: rgba(201,168,76,.05); margin-bottom: 2rem }
+.photo-received p { font-family: var(--serif); font-size: 1.1rem; font-weight: 300; color: var(--champagne); font-style: italic }
+
+.analysis-wrap { text-align: center; padding: 2rem 0 }
+.analysis-status { font-size: .67rem; letter-spacing: .38em; text-transform: uppercase; color: var(--gold); margin-bottom: 2.5rem; display: block; font-weight: 300 }
+.analysis-track { height: 1px; background: rgba(201,168,76,.1); max-width: 380px; margin: 0 auto 3rem; position: relative }
+.analysis-fill { height: 1px; background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-l)); width: 0%; position: relative }
+.analysis-fill::after { content: ''; position: absolute; right: -1px; top: -3.5px; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 12px var(--gold), 0 0 24px rgba(201,168,76,.4) }
+#analysis-reveal { display: none }
+.analysis-quote { font-family: var(--serif); font-size: clamp(1.3rem, 2.5vw, 1.9rem); font-weight: 300; font-style: italic; color: var(--champagne); line-height: 1.55; margin-bottom: 1rem; max-width: 54ch; margin-left: auto; margin-right: auto; letter-spacing: .01em }
+.analysis-quote-sub { font-size: .88rem; font-weight: 200; color: var(--ivory-2); max-width: 52ch; margin: 0 auto 3.5rem; line-height: 1.85 }
+.sentiment-question { font-size: .67rem; letter-spacing: .38em; text-transform: uppercase; color: var(--ivory-2); margin-bottom: 2rem; font-weight: 300 }
+.sentiment-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; max-width: 580px; margin: 0 auto 3rem }
+.sentiment-btn { padding: 1.35rem .5rem; border: 1px solid rgba(201,168,76,.25); background: transparent; color: var(--ivory); font-family: var(--serif); font-size: 1rem; font-weight: 400; letter-spacing: .06em; cursor: pointer; position: relative; overflow: hidden; transition: border-color .35s, color .35s, box-shadow .35s; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)) }
+.sentiment-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(201,168,76,.08), transparent); opacity: 0; transition: opacity .35s }
+.sentiment-btn:hover { border-color: rgba(201,168,76,.6); color: var(--champagne) } .sentiment-btn:hover::before { opacity: 1 }
+.sentiment-btn.selected { border-color: var(--gold); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold), 0 0 20px rgba(201,168,76,.18) }
+.sentiment-btn span { position: relative; z-index: 1 }
+.flow-btn { display: none; padding: 1rem 3rem; border: 1px solid var(--gold); background: transparent; color: var(--gold); font-family: var(--sans); font-size: .72rem; font-weight: 400; letter-spacing: .24em; text-transform: uppercase; cursor: pointer; margin: 0 auto; position: relative; overflow: hidden; transition: color .35s }
+.flow-btn::before { content: ''; position: absolute; inset: 0; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .4s var(--ease) }
+.flow-btn:hover { color: var(--bg) } .flow-btn:hover::before { transform: scaleX(1) }
+.flow-btn span { position: relative; z-index: 1 }
+
+.calendar-wrap { text-align: center }
+.calendar-title { font-family: var(--serif); font-size: clamp(1.4rem, 2.8vw, 1.9rem); font-weight: 300; color: var(--ivory); margin-bottom: .6rem; letter-spacing: .03em }
+.calendar-sub { font-size: .88rem; color: var(--ivory-2); margin-bottom: 3rem; font-weight: 200 }
+.calendar-frame { border: 1px solid rgba(201,168,76,.18); clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px)); overflow: hidden }
+.calendar-frame iframe { width: 100%; height: 700px; border: none; display: block; background: rgba(13,20,16,0.97) }
+.post-calendar-nudge { margin-top: 1.75rem }
+
+.postbooking { text-align: center; padding: 2.5rem 0 }
+.postbooking-gem { margin-bottom: 2rem }
+.postbooking-title { font-family: var(--serif); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 300; color: var(--champagne); margin-bottom: 1rem; line-height: 1.2; letter-spacing: .03em }
+.postbooking-title em { font-style: italic }
+.postbooking-sub { font-size: .9rem; color: var(--ivory-2); max-width: 44ch; margin: 0 auto 3rem; font-weight: 200; line-height: 1.85 }
+.wa-btn { display: inline-flex; align-items: center; gap: .8rem; padding: 1.1rem 2.5rem; background: #1da851; color: #fff; text-decoration: none; font-family: var(--sans); font-size: .82rem; font-weight: 400; letter-spacing: .1em; border-radius: 2rem; transition: background .3s, transform .3s; text-transform: uppercase }
+.wa-btn:hover { background: #17913f; transform: translateY(-2px) }
+
+/* ── TRUST ── */
+.trust { padding: 5rem 3.5rem; background: rgba(13,20,16,0.93); display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap; border-top: 1px solid rgba(201,168,76,.08) }
+.trust-item { text-align: center }
+.trust-num { font-family: var(--serif); font-size: 2.5rem; font-weight: 300; color: var(--gold); display: block; line-height: 1 }
+.trust-label { font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ivory-2); display: block; margin-top: .5rem; font-weight: 300 }
+
+/* ── FOOTER ── */
+footer { padding: 4rem 3.5rem; border-top: 1px solid rgba(201,168,76,.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; background: rgba(13,20,16,0.97) }
+.footer-copy { font-size: .72rem; color: var(--ivory-2); opacity: .3; font-weight: 200; letter-spacing: .06em }
+
+/* ── SCROLL-DRIVEN KEYFRAMES ── */
+@keyframes sd-rise  { from { opacity: 0; translate: 0 52px  } to { opacity: 1; translate: 0 0 } }
+@keyframes sd-left  { from { opacity: 0; translate: -56px 0 } to { opacity: 1; translate: 0 0 } }
+@keyframes sd-bloom { from { opacity: 0; scale: .86          } to { opacity: 1; scale: 1    } }
+
+/* ── CSS NATIVE SCROLL-DRIVEN (Chrome 115+, Safari 18+) ── */
+@supports (animation-timeline: view()) {
+  .proof-item {
+    opacity: 0;
+    animation: sd-rise linear both;
+    animation-timeline: view();
+  }
+  .proof-item:nth-child(1) { animation-range: entry 0%  entry 55% }
+  .proof-item:nth-child(2) { animation-range: entry 8%  entry 63% }
+  .proof-item:nth-child(3) { animation-range: entry 16% entry 71% }
+
+  .service-card {
+    opacity: 0;
+    animation: sd-rise linear both;
+    animation-timeline: view();
+  }
+  .service-card:nth-child(1) { animation-range: entry 0%  entry 50% }
+  .service-card:nth-child(2) { animation-range: entry 12% entry 62% }
+  .service-card:nth-child(3) { animation-range: entry 24% entry 74% }
+
+  .testimonial-card {
+    opacity: 0;
+    animation: sd-left linear both;
+    animation-timeline: view();
+  }
+  .testimonial-card:nth-child(1) { animation-range: entry 0%  entry 46% }
+  .testimonial-card:nth-child(2) { animation-range: entry 10% entry 56% }
+  .testimonial-card:nth-child(3) { animation-range: entry 20% entry 66% }
+
+  .trust-item {
+    animation: sd-bloom linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) { .services-grid { grid-template-columns: 1fr 1fr } .service-card:last-child { grid-column: span 2 } }
+@media (max-width: 768px) {
+  .hero-nav { padding: 1.75rem 1.5rem }
+  .hero-content { padding: 8rem 1.5rem 4rem }
+  .proof { flex-wrap: wrap; padding: 3.5rem 1.5rem }
+  .proof-item { flex: 0 0 50% }
+  .services, .testimonials, .conversion, .urgency { padding: 6rem 1.5rem }
+  .services-grid { grid-template-columns: 1fr } .service-card:last-child { grid-column: auto }
+  .testimonials-header { margin-left: 0 }
+  .testimonials-grid { grid-template-columns: 1fr }
+  .testimonial-card:nth-child(2), .testimonial-card:nth-child(3) { margin-top: 0 }
+  .sentiment-grid { grid-template-columns: repeat(2,1fr) }
+  .trust { gap: 2.5rem; padding: 4rem 1.5rem }
+  footer { padding: 3rem 1.5rem }
+  .floating-buttons { bottom: 1.25rem; right: 1rem }
+  .float-btn:hover { max-width: 3.25rem }
+  .step-connector { width: 3rem }
+}
+@media (max-width: 480px) {
+  .hero-content { padding: 7rem 1.25rem 3rem }
+  .proof-item { flex: 0 0 100% }
+  .proof-item + .proof-item { border-left: none; border-top: 1px solid rgba(201,168,76,.1) }
+  .calendar-frame iframe { height: 580px }
+  .services, .testimonials, .conversion, .urgency { padding: 5rem 1.25rem }
+  .trust, footer { padding: 3rem 1.25rem }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important } }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<!-- FLOATING BUTTONS -->
+<div class="floating-buttons">
+  <a href="#diagnostico" class="float-btn" aria-label="Agenda tu diagnóstico gratuito">
+    <svg class="float-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="1"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <span>Agenda tu diagnóstico</span>
+  </a>
+  <a href="https://wa.me/573000000000" target="_blank" rel="noopener" class="float-btn" aria-label="WhatsApp">
+    <svg class="float-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <span>Habla con un maestro joyero</span>
+  </a>
+</div>
+
+<!-- ════════════════════════════════
+     HERO
+════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="scan-line" id="scan-line" aria-hidden="true"></div>
+
+  <div class="hero-geometry" aria-hidden="true">
+    <svg width="100%" height="100%" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <polygon points="1160,30 1420,180 1440,520 1300,840 1080,760 990,320" fill="none" stroke="rgba(201,168,76,.055)" stroke-width="1"/>
+      <polygon points="1210,90 1380,210 1395,490 1270,770 1100,700 1040,360" fill="none" stroke="rgba(201,168,76,.03)" stroke-width=".75"/>
+      <line x1="1160" y1="30" x2="1080" y2="760" stroke="rgba(201,168,76,.04)" stroke-width=".5"/>
+      <line x1="1420" y1="180" x2="990" y2="320" stroke="rgba(201,168,76,.04)" stroke-width=".5"/>
+      <polygon points="120,60 220,30 280,100 260,190 160,210 80,145" fill="none" stroke="rgba(201,168,76,.07)" stroke-width="1"/>
+      <line x1="0" y1="820" x2="580" y2="640" stroke="rgba(201,168,76,.08)" stroke-width=".5"/>
+      <polygon points="380,800 420,780 440,810 420,840 380,840 360,810" fill="rgba(100,60,20,.06)" stroke="rgba(180,100,50,.18)" stroke-width=".75"/>
+    </svg>
+  </div>
+
+  <nav class="hero-nav" id="hero-nav">
+    <a href="#" class="logo" aria-label="Ocean Gold">
+      <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <polygon points="14,2 26,8 26,20 14,26 2,20 2,8" fill="none" stroke="rgba(201,168,76,1)" stroke-width="1"/>
+        <polygon points="14,7 21,11 21,17 14,21 7,17 7,11" fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.5)" stroke-width=".5"/>
+        <circle cx="14" cy="14" r="2.5" fill="rgba(201,168,76,1)"/>
+      </svg>
+      <span class="logo-wordmark">Ocean Gold</span>
+    </a>
+  </nav>
+
+  <div class="hero-content" id="hero-content">
+    <span class="hero-label">Joyería de autor &bull; Bogotá, Colombia</span>
+    <h1 class="hero-title" id="hero-title">
+      <span class="line"><span class="line-inner">¿Qué dice de ti esa joya</span></span>
+      <span class="line"><span class="line-inner">que guardas en el cajón</span></span>
+      <span class="line"><span class="line-inner"><em>porque está rota?</em></span></span>
+    </h1>
+    <p class="hero-sub">
+      No es metal dañado, es un recuerdo en pausa.<br>
+      Recupera la identidad que esa pieza representa para ti.
+    </p>
+    <a href="#diagnostico" class="hero-cta">
+      <span class="hero-cta-text">Descubrir el potencial de mi joya</span>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/>
+      </svg>
+    </a>
+  </div>
+
+  <svg class="hero-diagonal" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,72 L1440,0 L1440,72 Z" fill="rgba(13,20,16,0.93)"/>
+  </svg>
+</section>
+
+<!-- ════════════════════════════════
+     PROOF
+════════════════════════════════ -->
+<section class="proof" aria-label="Trayectoria">
+  <div class="proof-item">
+    <span class="proof-num">23</span>
+    <span class="proof-label">Años de oficio artesanal</span>
+  </div>
+  <div class="proof-item">
+    <span class="proof-num">+1.200</span>
+    <span class="proof-label">Historias recuperadas</span>
+  </div>
+  <div class="proof-item">
+    <span class="proof-num">4.9</span>
+    <span class="proof-label">Calificación promedio</span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     SERVICES
+════════════════════════════════ -->
+<section class="services" id="servicios">
+  <div class="services-header">
+    <span class="section-eyebrow">Elige tu camino</span>
+    <h2 class="section-title">¿Cuál es <em>tu situación?</em></h2>
+  </div>
+  <div class="services-grid">
+    <article class="service-card" tabindex="0" role="button" aria-label="Reparación">
+      <div class="service-gleam"></div>
+      <span class="service-index">01</span>
+      <h3 class="service-name">Reparación</h3>
+      <p class="service-tagline">"Mi joya favorita se rompió"</p>
+      <p class="service-desc">Cada fractura tiene solución. Devolvemos la integridad estructural y el brillo original, sin importar el estado de tu pieza.</p>
+      <a href="#diagnostico" class="service-link" tabindex="-1" aria-hidden="true">
+        Comenzar
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg>
+      </a>
+    </article>
+    <article class="service-card" tabindex="0" role="button" aria-label="Transformación">
+      <div class="service-gleam"></div>
+      <span class="service-index">02</span>
+      <h3 class="service-name">Transformación</h3>
+      <p class="service-tagline">"Tengo oro antiguo y quiero algo moderno"</p>
+      <p class="service-desc">Mantenemos el metal y la historia, renovamos el lenguaje visual. Tu herencia en un diseño que te identifica hoy.</p>
+      <a href="#diagnostico" class="service-link" tabindex="-1" aria-hidden="true">
+        Comenzar
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg>
+      </a>
+    </article>
+    <article class="service-card" tabindex="0" role="button" aria-label="Personalización">
+      <div class="service-gleam"></div>
+      <span class="service-index">03</span>
+      <h3 class="service-name">Personalización</h3>
+      <p class="service-tagline">"Quiero crear una pieza desde cero"</p>
+      <p class="service-desc">Desde una idea en tu mente hasta una pieza en tu mano. Joyas únicas que narran tu historia de forma irrepetible.</p>
+      <a href="#diagnostico" class="service-link" tabindex="-1" aria-hidden="true">
+        Comenzar
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="8,3 12,7 8,11"/></svg>
+      </a>
+    </article>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     TESTIMONIALS
+════════════════════════════════ -->
+<section class="testimonials" id="testimonios">
+  <div class="testimonials-header">
+    <span class="section-eyebrow">El espejo de evolución</span>
+    <h2 class="section-title">Lo que dicen<br><em>quienes confiaron</em></h2>
+  </div>
+  <div class="testimonials-grid">
+    <article class="testimonial-card">
+      <span class="t-mark" aria-hidden="true">"</span>
+      <p class="t-text">Tenía mi anillo de compromiso con una uña floja y me daba pánico perder el diamante, así que lo guardé por meses. En la asesoría entendí que no solo reparaban un anillo, protegían mi historia. Ahora no dejo de usarlo.</p>
+      <div class="t-author">
+        <div class="t-avatar" aria-hidden="true">ER</div>
+        <div><span class="t-name">Elena R.</span><span class="t-role">Cliente que protegió su legado</span></div>
+      </div>
+    </article>
+    <article class="testimonial-card">
+      <span class="t-mark" aria-hidden="true">"</span>
+      <p class="t-text">Tenía joyas de mi abuela que eran hermosas pero no encajaban conmigo. Pensé que era "malo" fundirlas, hasta que me mostraron que podía evolucionar su oro en un diseño que hoy me hace sentir empoderada y conectada con ella al mismo tiempo.</p>
+      <div class="t-author">
+        <div class="t-avatar" aria-hidden="true">CM</div>
+        <div><span class="t-name">Claudia M.</span><span class="t-role">Cliente que evolucionó su herencia</span></div>
+      </div>
+    </article>
+    <article class="testimonial-card">
+      <span class="t-mark" aria-hidden="true">"</span>
+      <p class="t-text">Pensé que mi cadena no tenía arreglo. En la cita virtual me hicieron ver detalles que ningún joyero me había explicado antes. No me vendieron una reparación, me hicieron descubrir el valor real de lo que ya tenía.</p>
+      <div class="t-author">
+        <div class="t-avatar" aria-hidden="true">JL</div>
+        <div><span class="t-name">Javier L.</span><span class="t-role">Cliente que redescubrió su patrimonio</span></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     URGENCY
+════════════════════════════════ -->
+<section class="urgency" id="urgencia">
+  <div class="urgency-bg" aria-hidden="true"></div>
+  <div class="urgency-inner">
+    <span class="urgency-eyebrow">Alerta de conservación</span>
+    <h2 class="urgency-headline">¿Sabías que un cierre desgastado es la razón&nbsp;#1 por la que se pierden las herencias familiares para siempre?</h2>
+    <p class="urgency-message">No esperes a que el daño sea irreversible. Un diagnóstico a tiempo es la diferencia entre conservar tu historia o perderla.</p>
+    <a href="#diagnostico" class="urgency-cta"><span>Quiero proteger mi joya ahora</span></a>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     CONVERSION FLOW
+════════════════════════════════ -->
+<section class="conversion" id="diagnostico">
+  <div class="conversion-header">
+    <span class="section-eyebrow">Diagnóstico gratuito</span>
+    <h2 class="section-title" style="font-size:clamp(2rem,3.8vw,3rem);">El renacimiento<br><em>comienza aquí</em></h2>
+  </div>
+
+  <div class="step-track">
+    <div class="step-node active" id="node-1"><div class="step-dot"></div><span class="step-label">Tu joya</span></div>
+    <div class="step-connector"></div>
+    <div class="step-node" id="node-2"><div class="step-dot"></div><span class="step-label">Tu sentir</span></div>
+    <div class="step-connector"></div>
+    <div class="step-node" id="node-3"><div class="step-dot"></div><span class="step-label">Tu cita</span></div>
+    <div class="step-connector"></div>
+    <div class="step-node" id="node-4"><div class="step-dot"></div><span class="step-label">Confirmación</span></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="conversion-step" id="step-1">
+    <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Sube una foto de tu joya">
+      <input type="file" id="file-input" accept="image/*">
+      <div class="upload-icon">
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+          <polygon points="26,6 48,16 48,36 26,46 4,36 4,16" fill="none"/>
+          <line x1="26" y1="22" x2="26" y2="38"/><line x1="18" y1="29" x2="26" y2="22"/><line x1="34" y1="29" x2="26" y2="22"/>
+        </svg>
+      </div>
+      <p class="upload-title">Paso 1: Inicia tu diagnóstico</p>
+      <p class="upload-subtitle">Sube una foto de tu joya para un análisis visual previo</p>
+      <p class="upload-hint">Arrastra tu imagen aquí o toca para seleccionar</p>
+      <div class="upload-preview" id="upload-preview">
+        <img id="preview-img" src="" alt="Vista previa de tu joya">
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="conversion-step hidden" id="step-2">
+    <div class="analysis-wrap">
+      <div id="analysis-loading">
+        <span class="analysis-status">Analizando estructura y valor emocional...</span>
+        <div class="analysis-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="analysis-progressbar">
+          <div class="analysis-fill" id="analysis-fill"></div>
+        </div>
+      </div>
+      <div id="analysis-reveal">
+        <p class="analysis-quote">"Tu pieza no está rota, solo está esperando su evolución."</p>
+        <p class="analysis-quote-sub">Has dado el paso que el 90% de la gente posterga: decidir que tus recuerdos merecen brillar de nuevo.</p>
+        <p class="sentiment-question">Si pudieras recuperar el brillo de esta joya hoy mismo, ¿qué sentimiento recuperas tú con ella?</p>
+        <div class="sentiment-grid">
+          <button class="sentiment-btn" data-sentiment="Orgullo" type="button"><span>Orgullo</span></button>
+          <button class="sentiment-btn" data-sentiment="Seguridad" type="button"><span>Seguridad</span></button>
+          <button class="sentiment-btn" data-sentiment="Amor" type="button"><span>Amor</span></button>
+          <button class="sentiment-btn" data-sentiment="Estatus" type="button"><span>Estatus</span></button>
+        </div>
+        <button class="flow-btn" id="continue-btn" type="button">
+          <span>Ver horarios disponibles para mi diagnóstico</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="conversion-step hidden" id="step-3">
+    <div class="calendar-wrap">
+      <h3 class="calendar-title">Tu pieza tiene potencial.</h3>
+      <p class="calendar-sub">Selecciona un horario exclusivo para tu diagnóstico gratuito.</p>
+      <div class="calendar-frame">
+        <iframe
+          id="ghl-iframe"
+          src=""
+          data-src="https://api.leadconnectorhq.com/widget/booking/gSMbRpfe4CCHqTBkOQZA"
+          style="width:100%;border:none;overflow:hidden;"
+          scrolling="no"
+          title="Agenda tu diagnóstico gratuito">
+        </iframe>
+      </div>
+      <div class="post-calendar-nudge">
+        <button id="booking-done-btn" class="flow-btn" type="button" style="display:inline-block;font-size:.65rem;opacity:.4;border-color:rgba(184,176,160,.4);color:rgba(184,176,160,.6)">
+          <span>Ya agendé mi cita</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="conversion-step hidden" id="step-4">
+    <div class="postbooking">
+      <div class="postbooking-gem" aria-hidden="true">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+          <polygon points="32,5 58,18 58,46 32,59 6,46 6,18" fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,1)" stroke-width="1"/>
+          <polygon points="32,16 48,24 48,40 32,48 16,40 16,24" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.35)" stroke-width=".75"/>
+          <line x1="32" y1="5" x2="16" y2="24" stroke="rgba(201,168,76,.2)" stroke-width=".5"/>
+          <line x1="32" y1="5" x2="48" y2="24" stroke="rgba(201,168,76,.2)" stroke-width=".5"/>
+          <circle cx="32" cy="32" r="4" fill="rgba(201,168,76,1)"/>
+        </svg>
+      </div>
+      <h3 class="postbooking-title">Tu cita está confirmada.<br><em>Tu joya te espera.</em></h3>
+      <p class="postbooking-sub">Comparte tu historia con nuestro equipo por WhatsApp y cuéntanos los detalles de tu pieza antes de la cita.</p>
+      <a id="wa-cta" href="#" target="_blank" rel="noopener" class="wa-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Enviar mensaje a nuestro equipo
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     TRUST
+════════════════════════════════ -->
+<section class="trust" aria-label="Autoridad y estatus">
+  <div class="trust-item">
+    <span class="trust-num" id="trust-counter">0</span>
+    <span class="trust-label">Historias recuperadas</span>
+  </div>
+  <div class="trust-item">
+    <span class="trust-num" style="font-size:1.6rem;line-height:1.4;">Expertos en Evolución<br>de Oro y Piedras Preciosas</span>
+    <span class="trust-label">23 años de oficio artesanal</span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     FOOTER
+════════════════════════════════ -->
+<footer>
+  <a href="#" class="logo">
+    <svg width="20" height="20" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <polygon points="14,2 26,8 26,20 14,26 2,20 2,8" fill="none" stroke="rgba(201,168,76,.5)" stroke-width="1"/>
+      <circle cx="14" cy="14" r="2" fill="rgba(201,168,76,.5)"/>
+    </svg>
+    <span class="logo-wordmark" style="opacity:.5;font-size:.85rem;">Ocean Gold</span>
+  </a>
+  <p class="footer-copy">&copy; 2026 Ocean Gold. Todos los derechos reservados.</p>
+</footer>
+
+<script src="https://link.msgsndr.com/js/form_embed.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const isMobile = window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent);
+const hasViewTimeline = CSS.supports('animation-timeline', 'view()');
+
+/* ── 1. SCROLL PROGRESS ── */
+const prog = document.getElementById('scroll-progress');
+window.addEventListener('scroll', () => {
+  prog.style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100) + '%';
+}, { passive: true });
+
+/* ── 2. GEMVERSE — full-page universe canvas ── */
+;(function GemVerse() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0;
+  let scrollRatio = 0, scrollVel = 0, lastSY = 0;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  window.addEventListener('scroll', () => {
+    const sy = window.scrollY;
+    const maxS = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+    scrollVel   = (sy - lastSY) * 0.014;
+    scrollRatio = sy / maxS;
+    lastSY = sy;
+  }, { passive: true });
+
+  /* ── Nebulae: 5 drifting radial blobs ── */
+  const NEBULAE = [
+    { bx: 0.72, by: 0.34, rx: 0.52, ry: 0.46, h: 68,  s: 52, l: 15, sx: 0.018, sy: 0.014, px: 0.0, py: 0.0, dx:  0.07, dy: -0.05 },
+    { bx: 0.17, by: 0.68, rx: 0.38, ry: 0.32, h: 155, s: 32, l: 11, sx: 0.013, sy: 0.019, px: 1.2, py: 0.8, dx: -0.04, dy:  0.06 },
+    { bx: 0.50, by: 0.52, rx: 0.55, ry: 0.44, h: 44,  s: 42, l: 13, sx: 0.011, sy: 0.012, px: 2.4, py: 1.6, dx:  0.05, dy:  0.04 },
+    { bx: 0.08, by: 0.20, rx: 0.28, ry: 0.24, h: 68,  s: 38, l: 10, sx: 0.022, sy: 0.016, px: 0.7, py: 2.1, dx: -0.06, dy: -0.07 },
+    { bx: 0.88, by: 0.78, rx: 0.30, ry: 0.26, h: 98,  s: 26, l: 13, sx: 0.016, sy: 0.021, px: 3.1, py: 0.4, dx:  0.03, dy:  0.05 },
+  ];
+
+  /* ── Facets: crystalline hexagonal forms ── */
+  const FACET_COUNT = isMobile ? 7 : 16;
+  const facets = Array.from({ length: FACET_COUNT }, () => ({
+    nx: Math.random(),        // normalized x
+    ny: Math.random(),        // normalized y
+    r:  20 + Math.random() * 44,
+    rot: Math.random() * Math.PI * 2,
+    rotSpd: (Math.random() - 0.5) * 0.0045,
+    sides: Math.random() > 0.55 ? 6 : 8,
+    alpha: 0.03 + Math.random() * 0.08,
+    hue:  [68, 68, 44, 152][Math.floor(Math.random() * 4)],
+    fp:   Math.random() * Math.PI * 2,     // flash phase
+    dny:  (Math.random() - 0.5) * 0.00015, // drift speed (normalized)
+  }));
+
+  /* ── Particles: gold dust ── */
+  const PCOUNT = isMobile ? 55 : 165;
+  function mkP(ny) {
+    return {
+      nx: Math.random(),
+      ny: ny ?? (1 + Math.random() * 0.08),
+      r:  0.25 + Math.random() * 1.6,
+      vny: -(0.00055 + Math.random() * 0.0028), // normalized velocity
+      vnx: (Math.random() - 0.5) * 0.0007,
+      a:  0.06 + Math.random() * 0.40,
+      hue: 63 + Math.random() * 20,
+      glow: Math.random() > 0.80,
+    };
+  }
+  const particles = Array.from({ length: PCOUNT }, () => mkP(Math.random()));
+
+  /* ── polygon path helper ── */
+  function polyPath(sides, r) {
+    ctx.beginPath();
+    for (let i = 0; i < sides; i++) {
+      const a = (i / sides) * Math.PI * 2 - Math.PI / 2;
+      i === 0
+        ? ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r)
+        : ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+    }
+    ctx.closePath();
+  }
+
+  function frame() {
+    t += 0.004;
+    scrollVel *= 0.86; // decay
+
+    /* Background */
+    ctx.fillStyle = '#0d1410';
+    ctx.fillRect(0, 0, W, H);
+
+    /* Nebulae */
+    NEBULAE.forEach(n => {
+      const cx = (n.bx + Math.sin(t * n.sx + n.px) * 0.09 + scrollRatio * n.dx) * W;
+      const cy = (n.by + Math.cos(t * n.sy + n.py) * 0.07 + scrollRatio * n.dy) * H;
+      const rr = n.rx * Math.min(W, H);
+      const g  = ctx.createRadialGradient(cx, cy, 0, cx, cy, rr);
+      g.addColorStop(0,   `hsla(${n.h},${n.s}%,${n.l}%,0.62)`);
+      g.addColorStop(0.4, `hsla(${n.h},${n.s}%,${n.l}%,0.22)`);
+      g.addColorStop(1,   `hsla(${n.h},${n.s}%,${n.l}%,0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rr, rr * (n.ry / n.rx), 0, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    /* Facets */
+    facets.forEach(f => {
+      f.rot += f.rotSpd + scrollVel * 0.0025;
+      f.ny  += f.dny + scrollVel * 0.0006;
+      if (f.ny > 1.08) f.ny = -0.08;
+      if (f.ny < -0.08) f.ny = 1.08;
+
+      const px    = f.nx * W;
+      const py    = f.ny * H;
+      const flash = 0.5 + 0.5 * Math.sin(t * 1.15 + f.fp);
+      const alpha = f.alpha + flash * 0.11;
+
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(f.rot);
+
+      /* outer polygon */
+      polyPath(f.sides, f.r);
+      ctx.strokeStyle = `hsla(${f.hue},65%,62%,${alpha})`;
+      ctx.lineWidth   = 0.65;
+      ctx.stroke();
+
+      /* inner catch-light when brightest */
+      if (flash > 0.72) {
+        polyPath(f.sides, f.r * 0.48);
+        ctx.strokeStyle = `hsla(${f.hue},82%,80%,${(flash - 0.72) * 0.6})`;
+        ctx.lineWidth   = 0.32;
+        ctx.stroke();
+      }
+      ctx.restore();
+    });
+
+    /* Particles */
+    particles.forEach(p => {
+      p.vny -= scrollVel * 0.000016; // scroll push
+      p.nx  += p.vnx;
+      p.ny  += p.vny;
+      if (p.ny < -0.02) {
+        p.nx  = Math.random();
+        p.ny  = 1.02;
+        p.vny = -(0.00055 + Math.random() * 0.0028);
+        p.vnx = (Math.random() - 0.5) * 0.0007;
+      }
+      ctx.beginPath();
+      ctx.arc(p.nx * W, p.ny * H, p.r, 0, Math.PI * 2);
+      if (p.glow) { ctx.shadowBlur = 7; ctx.shadowColor = `hsla(${p.hue},62%,58%,0.9)`; }
+      ctx.fillStyle = `hsla(${p.hue},55%,62%,${p.a})`;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ── 3. HERO REVEAL ── */
+(function() {
+  const tl = gsap.timeline({ delay: 0.25 });
+  gsap.set('.line-inner', { textShadow: '0 0 80px rgba(201,168,76,0.95)' });
+  tl.to('.logo',       { opacity: 1, duration: 0.8, ease: 'power3.out' });
+  tl.to('.hero-label', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4');
+  tl.to('.line-inner', {
+    y: '0%',
+    textShadow: '0 0 0px rgba(201,168,76,0)',
+    duration: 1.15,
+    stagger: 0.13,
+    ease: 'power4.out'
+  }, '-=0.5');
+  tl.to('.hero-sub',  { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out' }, '-=0.35');
+  tl.to('.hero-cta',  { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out' }, '-=0.3');
+  tl.call(() => {
+    const sl = document.getElementById('scan-line');
+    gsap.to(sl, { opacity: 1, duration: 0.08 });
+    gsap.to(sl, { top: '110%', duration: 1.6, ease: 'power2.inOut',
+      onComplete: () => gsap.set(sl, { opacity: 0, top: '40%' }) });
+  }, null, '+=0.1');
+})();
+
+/* ── 4. PARALLAX (hero 3 layers + urgency depth) ── */
+if (!isMobile) {
+  gsap.to('.hero-geometry', { y: '-32%', ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.6 } });
+  gsap.to('#hero-nav',      { y: '-10%', ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.4 } });
+  gsap.to('#hero-content',  { y: '-22%', ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.0 } });
+
+  /* Urgency: text floats upward slightly as canvas bleeds through */
+  gsap.to('.urgency-inner', { y: '-18px', ease: 'none',
+    scrollTrigger: { trigger: '.urgency', start: 'top bottom', end: 'bottom top', scrub: 0.8 } });
+}
+
+/* ── 5. LUMINOUS SECTION REVEALS ── */
+function revealGlow(sel, trigger, opts = {}) {
+  const els = document.querySelectorAll(sel);
+  if (!els.length) return;
+  gsap.fromTo(els,
+    { opacity: 0, y: opts.y ?? 30, textShadow: '0 0 55px rgba(201,168,76,0.85)' },
+    { opacity: 1, y: 0, textShadow: '0 0 0px rgba(201,168,76,0)',
+      duration: opts.duration ?? 1.3, stagger: opts.stagger ?? 0, ease: 'power3.out',
+      scrollTrigger: { trigger: trigger, start: opts.start ?? 'top 80%' }
+    }
+  );
+}
+
+revealGlow('.services-header .section-title',    '.services-header',    { y: 24 });
+revealGlow('.testimonials-header .section-title','.testimonials-header',{ y: 24 });
+revealGlow('.urgency-headline',                   '.urgency-inner',      { y: 20, duration: 1.4 });
+revealGlow('.conversion-header .section-title',   '.conversion-header',  { y: 20 });
+
+gsap.from(['.urgency-eyebrow', '.urgency-message', '.urgency-cta'], {
+  opacity: 0, y: 18, duration: 0.85, stagger: 0.15, ease: 'power3.out',
+  scrollTrigger: { trigger: '.urgency', start: 'top 78%' }
+});
+
+/* ── 6. GSAP CARD FALLBACK (browsers without CSS scroll-driven) ── */
+if (!hasViewTimeline) {
+  gsap.from('.proof-item', {
+    opacity: 0, y: 40, duration: 0.85, stagger: 0.12, ease: 'power3.out',
+    scrollTrigger: { trigger: '.proof', start: 'top 83%' }
+  });
+  gsap.from('.service-card', {
+    clipPath: 'inset(0 100% 0 0)', duration: 0.9, stagger: 0.15, ease: 'power3.out',
+    scrollTrigger: { trigger: '.services-grid', start: 'top 83%' }
+  });
+  gsap.from('.testimonial-card', {
+    x: 60, opacity: 0, duration: 0.9, stagger: 0.2, ease: 'power3.out',
+    scrollTrigger: {
+      trigger: '.testimonials-grid', start: 'top 83%',
+      onEnter: () => {
+        setTimeout(() => {
+          document.querySelectorAll('.testimonial-card').forEach((c, i) =>
+            setTimeout(() => c.classList.add('lit'), i * 220));
+        }, 400);
+      }
+    }
+  });
+} else {
+  /* Native scroll-driven: trigger the lit class manually */
+  ScrollTrigger.create({
+    trigger: '.testimonials-grid', start: 'top 80%',
+    onEnter: () => {
+      setTimeout(() => {
+        document.querySelectorAll('.testimonial-card').forEach((c, i) =>
+          setTimeout(() => c.classList.add('lit'), i * 220));
+      }, 600);
+    }
+  });
+}
+
+/* ── 7. TRUST COUNTER ── */
+let trustDone = false;
+ScrollTrigger.create({
+  trigger: '.trust', start: 'top 84%',
+  onEnter: () => {
+    if (trustDone) return; trustDone = true;
+    const el  = document.getElementById('trust-counter');
+    const obj = { v: 0 };
+    gsap.to(obj, { v: 1200, duration: 2.2, ease: 'power2.out',
+      onUpdate: () => { el.textContent = '+' + Math.floor(obj.v).toLocaleString('es-CO'); }
+    });
+  }
+});
+
+/* ── 8. SERVICE CARD CLICK ── */
+document.querySelectorAll('.service-card').forEach(card => {
+  const go = () => document.getElementById('diagnostico').scrollIntoView({ behavior: 'smooth' });
+  card.addEventListener('click', go);
+  card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+});
+
+/* ── 9. CONVERSION FLOW ── */
+let selectedSentiment = '';
+
+function setNodes(n) {
+  for (let i = 1; i <= 4; i++) {
+    const node = document.getElementById('node-' + i);
+    node.classList.remove('active', 'done');
+    if (i < n) node.classList.add('done');
+    if (i === n) node.classList.add('active');
+  }
+}
+
+function showStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('step-' + i);
+    if (el) el.classList.add('hidden');
+  }
+  setNodes(n);
+  const step = document.getElementById('step-' + n);
+  if (!step) return;
+  step.classList.remove('hidden');
+  gsap.fromTo(step, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.72, ease: 'power3.out' });
+  step.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  if (n === 3) {
+    const iframe = document.getElementById('ghl-iframe');
+    if (iframe && !iframe.src.includes('leadconnector')) {
+      iframe.src = iframe.dataset.src;
+    }
+  }
+}
+
+/* Step 1: upload */
+const uploadArea = document.getElementById('upload-area');
+const fileInput  = document.getElementById('file-input');
+uploadArea.addEventListener('click', () => fileInput.click());
+uploadArea.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+uploadArea.addEventListener('dragover',  e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault(); uploadArea.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) processFile(f);
+});
+fileInput.addEventListener('change', e => { if (e.target.files[0]) processFile(e.target.files[0]); });
+
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('preview-img').src = ev.target.result;
+    const prev = document.getElementById('upload-preview');
+    prev.style.display = 'block';
+    gsap.fromTo(prev, { opacity: 0, scale: 0.93 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power3.out' });
+    setTimeout(() => showStep(2), 1200);
+  };
+  reader.readAsDataURL(file);
+}
+
+/* Step 2: analysis */
+function runAnalysis() {
+  const fill    = document.getElementById('analysis-fill');
+  const bar     = document.getElementById('analysis-progressbar');
+  const loading = document.getElementById('analysis-loading');
+  const reveal  = document.getElementById('analysis-reveal');
+  let pct = 0;
+  const phases = [{ target: 40, spd: 3 }, { target: 68, spd: 1.5 }, { target: 89, spd: 0.8 }, { target: 100, spd: 2 }];
+  let ph = 0;
+  const tick = setInterval(() => {
+    pct += phases[ph].spd * (Math.random() * 0.9 + 0.5);
+    if (pct >= phases[ph].target) {
+      pct = phases[ph].target; ph++;
+      if (ph >= phases.length) {
+        clearInterval(tick);
+        fill.style.width = '100%';
+        bar.setAttribute('aria-valuenow', '100');
+        setTimeout(() => {
+          gsap.to(loading, { opacity: 0, duration: 0.4, onComplete: () => {
+            loading.style.display = 'none';
+            reveal.style.display = 'block';
+            gsap.fromTo(reveal, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' });
+          }});
+        }, 450);
+        return;
+      }
+    }
+    fill.style.width = pct + '%';
+    bar.setAttribute('aria-valuenow', Math.floor(pct));
+  }, 55);
+}
+
+let analysisStarted = false;
+const step2El = document.getElementById('step-2');
+new MutationObserver(mutations => {
+  mutations.forEach(m => {
+    if (m.attributeName === 'class' && !step2El.classList.contains('hidden') && !analysisStarted) {
+      analysisStarted = true;
+      setTimeout(runAnalysis, 500);
+    }
+  });
+}).observe(step2El, { attributes: true });
+
+/* Sentiment */
+document.querySelectorAll('.sentiment-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sentiment-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSentiment = btn.dataset.sentiment;
+    const cb = document.getElementById('continue-btn');
+    cb.style.display = 'inline-block';
+    gsap.fromTo(cb, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' });
+  });
+});
+document.getElementById('continue-btn').addEventListener('click', () => { if (selectedSentiment) showStep(3); });
+
+/* Step 3 */
+document.getElementById('booking-done-btn').addEventListener('click', () => { buildWA(); showStep(4); });
+window.addEventListener('message', e => {
+  try {
+    const d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+    if (d && (d.type === 'booking-confirmed' || d.event === 'booking_complete' || d.event === 'form_submit')) {
+      buildWA(); showStep(4);
+    }
+  } catch (_) {}
+});
+
+function buildWA() {
+  const s   = selectedSentiment || 'plena';
+  const msg = encodeURIComponent(`Hola, acabo de agendar mi diagnóstico. Si pudiera recuperar el brillo de mi joya mañana con un chasquido de dedos, me sentiría ${s} de nuevo. ¿Qué fotos adicionales necesitan?`);
+  document.getElementById('wa-cta').href = `https://wa.me/573000000000?text=${msg}`;
+}
+
+/* ── 10. MOBILE: stop hover-expand flicker ── */
+if (isMobile) {
+  document.querySelectorAll('.float-btn').forEach(btn => {
+    btn.addEventListener('touchstart', () => {}, { passive: true });
+  });
+}
+</script>
+</body>
+</html>
