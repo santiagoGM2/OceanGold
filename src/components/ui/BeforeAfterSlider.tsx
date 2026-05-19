@@ -173,10 +173,11 @@ export function BeforeAfterSlider({
           }
         }}
       >
-        {/* Imagen ANTES (debajo) */}
+        {/* Imagen DESPUÉS (debajo — siempre visible, se revela a la derecha
+            cuando el clip de la imagen ANTES (encima) se encoge hacia 0%) */}
         <Image
-          src={beforeSrc}
-          alt={`${alt} — ${beforeLabel}`}
+          src={afterSrc}
+          alt={`${alt} — ${afterLabel}`}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
           className="object-cover pointer-events-none select-none"
@@ -184,14 +185,15 @@ export function BeforeAfterSlider({
           draggable={false}
         />
 
-        {/* Imagen DESPUÉS (encima, recortada) */}
+        {/* Imagen ANTES (encima, recortada de 0% a position% — visible en el
+            lado IZQUIERDO, coincide con la etiqueta "Antes" arriba a la izquierda) */}
         <motion.div
           className="absolute inset-0 pointer-events-none"
           style={{ clipPath }}
         >
           <Image
-            src={afterSrc}
-            alt={`${alt} — ${afterLabel}`}
+            src={beforeSrc}
+            alt={`${alt} — ${beforeLabel}`}
             fill
             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             className="object-cover select-none"
