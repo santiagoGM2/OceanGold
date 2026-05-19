@@ -179,17 +179,29 @@ export function Step2Photo() {
         </p>
       )}
 
-      {isPersonalizacion && !state.draft.photoUrl && !processing && (
-        <button
-          type="button"
-          onClick={() => {
-            track("form_step_completed", { step_number: 2, step_name: "photo-skip" });
-            go("aha");
-          }}
-          className="mt-6 text-[0.7rem] tracking-[0.22em] uppercase text-text-muted hover:text-accent-gold underline-offset-4 hover:underline cursor-pointer"
-        >
-          Continuar sin foto →
-        </button>
+      {!state.draft.photoUrl && !processing && (
+        <div className="mt-8 pt-6 border-t border-border-subtle/60">
+          <p className="text-text-muted font-light text-[0.92rem] leading-relaxed mb-3">
+            ¿No tienes la foto en este momento?
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              track("form_step_completed", { step_number: 2, step_name: "photo-skip" });
+              // Sin foto, saltamos el AHA reveal (su copy "Foto recibida" no aplica)
+              // y vamos directo al quiz.
+              go("quiz");
+            }}
+            className="inline-flex w-full sm:w-auto items-center justify-center gap-3 px-6 sm:px-8 py-3.5 border border-border-subtle hover:border-accent-gold/70 text-text-muted hover:text-accent-gold font-sans text-[0.7rem] tracking-[0.22em] uppercase transition-colors duration-200 cursor-pointer rounded-md text-center"
+          >
+            <span>No tengo la foto ahora · Continuar sin foto</span>
+            <span aria-hidden>→</span>
+          </button>
+          <p className="mt-3 text-[0.75rem] text-text-muted/80 font-light italic leading-relaxed max-w-md">
+            Puedes enviárnosla más tarde por WhatsApp después de agendar tu
+            diagnóstico.
+          </p>
+        </div>
       )}
     </motion.div>
   );
