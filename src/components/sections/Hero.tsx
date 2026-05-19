@@ -1,14 +1,16 @@
 "use client";
 
+import { useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { BUSINESS, COPY, STATS } from "@/lib/constants";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
-import { Jewel } from "@/components/ui/Jewel";
+import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 export function Hero() {
   const reduce = useReducedMotion();
+  const heroRef = useRef<HTMLElement>(null);
 
   // Dividimos el título en palabras para animar palabra por palabra.
   const titleWords = COPY.hero.title.split(" ");
@@ -43,9 +45,12 @@ export function Hero() {
 
   return (
     <section
+      ref={heroRef}
       id="hero"
-      className="relative min-h-[100svh] flex flex-col px-6 md:px-14 py-20 md:py-32"
+      className="relative min-h-[100svh] flex flex-col px-6 md:px-14 py-20 md:py-32 isolate overflow-hidden"
     >
+      <HeroVideoBackground heroRef={heroRef} />
+
       <header className="absolute top-8 left-6 right-6 md:top-10 md:left-14 md:right-14 flex items-center justify-between z-10">
         <span className="font-serif text-[0.95rem] tracking-[0.35em] text-champagne uppercase">
           {BUSINESS.name}
@@ -54,14 +59,6 @@ export function Hero() {
           Joyería de autor · {BUSINESS.location}
         </span>
       </header>
-
-      {/* Jewel3D decorativo a la derecha (sólo desktop ≥ 1024px) */}
-      <div
-        aria-hidden
-        className="hidden lg:block absolute right-[3%] top-1/2 -translate-y-1/2 w-[38%] max-w-[520px] aspect-square pointer-events-none z-[2]"
-      >
-        <Jewel />
-      </div>
 
       <motion.div
         className="mt-auto mb-auto max-w-7xl mx-auto w-full relative z-[3]"
@@ -76,7 +73,7 @@ export function Hero() {
           El renacimiento de tu joya
         </motion.span>
 
-        <h1 className="font-serif font-light leading-[1.05] tracking-[0.02em] text-ivory text-[clamp(2.4rem,5.2vw,6rem)] mb-10">
+        <h1 className="font-serif font-light leading-[1.05] tracking-[-0.025em] text-ivory text-[clamp(2.5rem,5.5vw,6rem)] mb-10">
           {titleWords.map((word, i) => (
             <span key={i} className="inline-block overflow-hidden align-baseline">
               <motion.span

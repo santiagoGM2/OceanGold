@@ -28,7 +28,7 @@ export const BUSINESS = {
   differentiators: [
     "23 años de experiencia artesanal",
     "Diagnóstico gratuito virtual o presencial (10 a 20 minutos)",
-    "Especialistas en joyería cubana y latina de 10K y 14K",
+    "Especialistas en joyería cubana y latina en 10K, 14K, 18K, 22K y 24K",
     "Garantía explícita por escrito",
     "Servicio express disponible",
     "Comunicación proactiva en cada etapa: foto al recibir la pieza, aviso al comenzar el trabajo y notificación al terminar",

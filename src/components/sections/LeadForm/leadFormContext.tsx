@@ -10,7 +10,14 @@ import {
   type ReactNode,
 } from "react";
 import type { Feeling, ServiceId } from "@/lib/constants";
-import type { LeadDraft, QuizAnswers } from "@/types/lead";
+import {
+  flattenQuizState,
+  quizStateToTextArray,
+  type LeadDraft,
+  type QuizAnswers,
+  type QuizFieldState,
+} from "@/types/lead";
+import { mapToFeeling } from "@/lib/feelingMapper";
 
 const STORAGE_KEY = "oceangold:lead-draft:v1";
 
@@ -48,7 +55,7 @@ type Action =
   | { type: "select_service"; service: ServiceId }
   | { type: "set_photo"; photoUrl: string }
   | { type: "clear_photo" }
-  | { type: "set_quiz_answer"; key: string; value: string }
+  | { type: "set_quiz_field"; key: string; field: QuizFieldState }
   | { type: "set_feeling"; feeling: Feeling }
   | { type: "set_contact"; name: string; phone: string; email: string }
   | { type: "go"; step: StepId }
@@ -78,12 +85,12 @@ function reducer(state: State, action: Action): State {
         ...state,
         draft: { ...state.draft, photoUrl: null, photoUploaded: false },
       };
-    case "set_quiz_answer":
+    case "set_quiz_field":
       return {
         ...state,
         draft: {
           ...state.draft,
-          quizAnswers: { ...state.draft.quizAnswers, [action.key]: action.value },
+          quizAnswers: { ...state.draft.quizAnswers, [action.key]: action.field },
         },
       };
     case "set_feeling":
@@ -134,8 +141,14 @@ type LeadFormContextValue = {
   selectService: (service: ServiceId) => void;
   setPhoto: (photoUrl: string) => void;
   clearPhoto: () => void;
-  setQuizAnswer: (key: string, value: string) => void;
+  setQuizField: (key: string, field: QuizFieldState) => void;
   setFeeling: (feeling: Feeling) => void;
+  /**
+   * Recalcula el feeling con `mapToFeeling` usando todas las respuestas
+   * del quiz + textos libres "Otro" actuales. Llamarlo justo antes de
+   * avanzar al Step4 / submit.
+   */
+  computeFeelingFromQuiz: () => Feeling;
   setContact: (name: string, phone: string, email: string) => void;
   go: (step: StepId) => void;
   submitStart: () => void;
@@ -145,7 +158,8 @@ type LeadFormContextValue = {
   reset: () => void;
   // Compat con LeadFormProvider previo: selectService haciendo scroll al form.
   selectServiceAndScroll: (service: ServiceId) => void;
-  // Helper para construir payload para el webhook.
+  // Helper para construir payload para el webhook. Aplana el QuizState
+  // interno a Record<string, string> via `flattenQuizState`.
   buildPayload: () => {
     name: string;
     phone: string;
@@ -211,13 +225,21 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "clear_photo" });
   }, []);
 
-  const setQuizAnswer = useCallback((key: string, value: string) => {
-    dispatch({ type: "set_quiz_answer", key, value });
+  const setQuizField = useCallback((key: string, field: QuizFieldState) => {
+    dispatch({ type: "set_quiz_field", key, field });
   }, []);
 
   const setFeeling = useCallback((feeling: Feeling) => {
     dispatch({ type: "set_feeling", feeling });
   }, []);
+
+  // `state` capturado en cierre del callback; usamos ref para leer fresco.
+  const computeFeelingFromQuiz = useCallback((): Feeling => {
+    const answers = quizStateToTextArray(state.draft.quizAnswers);
+    const feeling = mapToFeeling(answers);
+    dispatch({ type: "set_feeling", feeling });
+    return feeling;
+  }, [state.draft.quizAnswers]);
 
   const setContact = useCallback((name: string, phone: string, email: string) => {
     dispatch({ type: "set_contact", name, phone, email });
@@ -248,7 +270,7 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
       email: d.email,
       service: d.service,
       photoUrl: d.photoUrl,
-      quizAnswers: d.quizAnswers,
+      quizAnswers: flattenQuizState(d.quizAnswers),
       feeling: d.feeling,
     };
   }, [state.draft]);
@@ -260,8 +282,9 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
       selectServiceAndScroll,
       setPhoto,
       clearPhoto,
-      setQuizAnswer,
+      setQuizField,
       setFeeling,
+      computeFeelingFromQuiz,
       setContact,
       go,
       submitStart,
@@ -277,8 +300,9 @@ export function LeadFormProvider({ children }: { children: ReactNode }) {
       selectServiceAndScroll,
       setPhoto,
       clearPhoto,
-      setQuizAnswer,
+      setQuizField,
       setFeeling,
+      computeFeelingFromQuiz,
       setContact,
       go,
       submitStart,

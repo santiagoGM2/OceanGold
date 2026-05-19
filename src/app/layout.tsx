@@ -92,6 +92,15 @@ export default function RootLayout({
       className={`${cinzel.variable} ${jost.variable} antialiased`}
     >
       <head>
+        {/* Preload del poster del Hero: es el candidato LCP en mobile.
+            Sin esta hint el browser lo descubre tarde y arrastra LCP a ~5.7s. */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-poster.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }}
