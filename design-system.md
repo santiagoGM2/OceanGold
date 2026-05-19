@@ -101,6 +101,42 @@ Los tokens viejos siguen disponibles — los alias son **additivos**, sin renomb
 
 Mobile quedó por debajo del target 65+. El LCP de 5.74s es el limitante; análisis pendiente sobre si el video diferido reasigna el LCP candidate cuando el primer frame se pinta post-idle.
 
+### Tech Debt para Fase F.6 (perf-focused)
+
+Durante la medición de Lighthouse mobile en Fase F.5 se identificó que el **LCP element en mobile** (Slow 4G + 4× CPU throttle) es el `<p>` subtitle del Hero (`"Porque lo que esa pieza representa para ti merece seguir brillando."`), no el `<h1>` ni el video. Lighthouse element trace lo confirma a lo largo de **todas** las micro-optimizaciones intentadas (mobile autoplay off, h1 stagger conditional, AnimatedCounter freeze, SSR preload off, Cinzel `display: optional`). El LCP queda anclado en ~5.75s con varianza < 0.1s.
+
+**Causa probable**: el subtitle se pinta con la fuente **Jost** (`display: 'swap'` via `next/font/google`). En la simulación Slow 4G la fuente Jost arriba tarde, el browser pinta primero con fallback `system-ui`, y cuando llega Jost re-flow → el último paint del elemento más grande visible (el subtitle) cuenta como el nuevo LCP candidate. Eso lo empuja a los ~5.75s.
+
+**Acciones prescritas para Fase F.6**, en orden de probable impacto:
+
+1. **Preload de Jost peso 300** con `<link rel="preload" as="font" fetchpriority="high" crossorigin="anonymous">` en `<head>`. El peso 300 es el que usa el subtitle (`font-light`). Validar contra `curl -s URL | grep preload` que next/font no esté ya emitiendo este peso específicamente; si está, comprobar prioridad.
+
+2. **`size-adjust` y `ascent-override` en el fallback** para que `system-ui` ocupe exactamente las mismas métricas que Jost. Esto elimina el reflow que reasigna el LCP. Next/font incluye `adjustFontFallback: true` por defecto pero la métrica auto-generada puede no ser exacta para todos los pesos; verificar `globals.css` de next-emitted `@font-face` y override manual si es necesario.
+
+3. **Evaluar `display: 'optional'` en Jost del subtitle específicamente**. Trade-off: visitantes en conexiones lentas verán `system-ui` permanentemente para este párrafo. Aceptable para LCP, riesgo de brand consistency bajo si el fallback usa size-adjust correcto.
+
+4. **Considerar font-display: optional + fallback metrics ajustadas** combinados — la combinación es complementaria, no excluyente. La spec recomendada de Lighthouse 12 / web.dev es `display: optional` + Sass/CSS-level size-adjust manual.
+
+Probables ganancias acumuladas: mobile **63 → 75+**, LCP **5.75s → ~2.0-2.5s**.
+
+**Lo que NO se debe intentar otra vez** (validado experimentalmente en F.5, sin ganancia):
+- Cinzel `display: 'optional'` solo (no es el LCP element).
+- Hero h1 stagger removal (el LCP no es el h1 en mobile post-fade-in CSS).
+- BeforeAfter priority preload removal (es below-the-fold, no afectaba el LCP directamente).
+- Mobile autoplay del video deferrido o eliminado (el LCP element nunca fue el video).
+
+Estado de mediciones para F.6 (baseline a batir):
+
+| Métrica | Localhost prod | Target F.6 |
+|---|---|---|
+| Mobile score | 63 | 75+ |
+| Mobile LCP | 5.75s | ≤ 2.5s |
+| Mobile FCP | 1.08s | ≤ 1.8s ✓ ya |
+| Mobile TBT | 588ms | ≤ 200ms |
+| Mobile SI | 3.10s | ≤ 3.4s ✓ ya |
+| Mobile CLS | 0.000 | ≤ 0.1 ✓ ya |
+| Desktop score | 97 | 95+ ✓ ya |
+
 ### Cambios visuales NO aplicados
 
 Algunas líneas de la spec de "polish premium USD 100K look" se mantuvieron como **propuestas opcionales** porque cambian la voz del brand y conviene iterarlas con feedback:
