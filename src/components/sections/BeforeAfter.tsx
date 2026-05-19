@@ -168,7 +168,12 @@ export function BeforeAfter() {
                             afterSrc={p.afterSrc}
                             alt={p.alt}
                             playWelcomeAnimation={pageIdx === 0 && idx === 0}
-                            priority={pageIdx === 0 && idx === 0}
+                            // priority desactivado en SSR para evitar preload
+                            // de las webps en mobile (BeforeAfter está
+                            // below-the-fold y `useBreakpoint` default es
+                            // "desktop" durante SSR, lo que emitía link rel=preload
+                            // incluso para visitantes mobile).
+                            priority={false}
                           />
                         ))}
                     </div>

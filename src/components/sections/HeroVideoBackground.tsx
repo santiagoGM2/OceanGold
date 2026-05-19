@@ -9,18 +9,13 @@
  *   - Desktop (≥1024px): adjuntar inmediatamente. `pause()` y `useScroll`
  *     mapea `currentTime` al scrollYProgress del section Hero (scrubbing).
  *
- *   - Mobile (<1024px) en red rápida: diferir el attach + play() hasta
- *     `requestIdleCallback` (fallback `setTimeout` 1500ms). Esto saca el
- *     download del video del critical path para que el LCP del h1 gane.
- *
- *   - Mobile + `saveData` / `effectiveType` ∈ {slow-2g, 2g, 3g}: no adjuntar
- *     sources nunca. Queda sólo el poster `.webp` (~105 KB) como backdrop.
+ *   - Mobile (<1024px): **nunca** se adjuntan sources. Queda sólo el poster
+ *     `.webp` (~105 KB). Decisión Fase F.5: el video en mobile pesaba el LCP
+ *     a ~5.7s sin aportar wow factor real en pantalla pequeña con overlay
+ *     al 50-75%. Mover a poster-only sube Lighthouse mobile de 63 a 75+ sin
+ *     pérdida visual significativa.
  *
  *   - `prefers-reduced-motion`: no adjuntar sources, queda el poster estático.
- *
- * Por qué no usar `preload="metadata"` + autoplay: en mobile la llamada a
- * `play()` dispara la descarga completa (~3.5 MB), bloqueando el LCP a 5s+
- * en Slow 4G simulado.
  */
 
 import { useEffect, useRef, type RefObject } from "react";
@@ -28,21 +23,6 @@ import { useReducedMotion, useScroll, useMotionValueEvent } from "motion/react";
 
 interface Props {
   heroRef: RefObject<HTMLElement | null>;
-}
-
-type ConnectionInfo = {
-  saveData?: boolean;
-  effectiveType?: string;
-};
-
-function isSlowConnection(): boolean {
-  const conn = (navigator as Navigator & { connection?: ConnectionInfo }).connection;
-  if (!conn) return false;
-  if (conn.saveData === true) return true;
-  if (conn.effectiveType && ["slow-2g", "2g", "3g"].includes(conn.effectiveType)) {
-    return true;
-  }
-  return false;
 }
 
 function attachSources(v: HTMLVideoElement) {
@@ -86,46 +66,15 @@ export function HeroVideoBackground({ heroRef }: Props) {
     if (reduce) return;
 
     const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
-
-    if (isDesktop) {
-      // Desktop: video disponible para scrubbing desde el inicio (sin play).
-      attachSources(v);
-      v.pause();
+    if (!isDesktop) {
+      // Mobile: queda poster-only. Decisión Fase F.5 — el LCP en mobile vale
+      // más que el video sutil de fondo (pantalla pequeña + overlay al 50%+).
       return;
     }
 
-    // Mobile.
-    if (isSlowConnection()) return;
-
-    // Diferir attach + play hasta que el browser esté idle, fuera del
-    // critical path. El poster cubre el Hero mientras tanto.
-    let idleHandle: number | null = null;
-    let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
-
-    const kick = () => {
-      const vid = videoRef.current;
-      if (!vid) return;
-      attachSources(vid);
-      const p = vid.play();
-      if (p && typeof p.catch === "function") p.catch(() => {});
-    };
-
-    const win = window as Window & {
-      requestIdleCallback?: (cb: IdleRequestCallback, opts?: { timeout: number }) => number;
-      cancelIdleCallback?: (handle: number) => void;
-    };
-    if (typeof win.requestIdleCallback === "function") {
-      idleHandle = win.requestIdleCallback(kick, { timeout: 3000 });
-    } else {
-      timeoutHandle = setTimeout(kick, 1500);
-    }
-
-    return () => {
-      if (idleHandle != null && typeof win.cancelIdleCallback === "function") {
-        win.cancelIdleCallback(idleHandle);
-      }
-      if (timeoutHandle) clearTimeout(timeoutHandle);
-    };
+    // Desktop: adjuntar sources para que el scrubbing tenga el video listo.
+    attachSources(v);
+    v.pause();
   }, [reduce]);
 
   return (

@@ -74,16 +74,21 @@ export function Hero() {
         </motion.span>
 
         <h1 className="font-serif font-light leading-[1.05] tracking-[-0.025em] text-ivory text-[clamp(2.5rem,5.5vw,6rem)] mb-10">
-          {titleWords.map((word, i) => (
-            <span key={i} className="inline-block overflow-hidden align-baseline">
-              <motion.span
-                variants={wordVariants}
-                className="inline-block pr-[0.25em]"
-              >
-                {word}
-              </motion.span>
-            </span>
-          ))}
+          {/* Mobile (<1024px): h1 plano, fade-in 200ms via CSS — sin hydration flash. */}
+          <span className="lg:hidden h1-mobile-fade">{COPY.hero.title}</span>
+          {/* Desktop (≥1024px): stagger word-by-word — preserva el wow factor. */}
+          <span className="hidden lg:inline">
+            {titleWords.map((word, i) => (
+              <span key={i} className="inline-block overflow-hidden align-baseline">
+                <motion.span
+                  variants={wordVariants}
+                  className="inline-block pr-[0.25em]"
+                >
+                  {word}
+                </motion.span>
+              </span>
+            ))}
+          </span>
         </h1>
 
         {/* Subtitle estático (no `motion.p`) para mantener un LCP rápido.
