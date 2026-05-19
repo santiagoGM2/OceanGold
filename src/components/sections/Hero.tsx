@@ -1,16 +1,13 @@
 "use client";
 
-import { useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { BUSINESS, COPY, STATS } from "@/lib/constants";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
-import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 export function Hero() {
   const reduce = useReducedMotion();
-  const heroRef = useRef<HTMLElement>(null);
 
   // Dividimos el título en palabras para animar palabra por palabra.
   const titleWords = COPY.hero.title.split(" ");
@@ -45,12 +42,9 @@ export function Hero() {
 
   return (
     <section
-      ref={heroRef}
       id="hero"
       className="relative min-h-[100svh] flex flex-col px-6 md:px-14 py-20 md:py-32 isolate overflow-hidden"
     >
-      <HeroVideoBackground heroRef={heroRef} />
-
       <header className="absolute top-8 left-6 right-6 md:top-10 md:left-14 md:right-14 flex items-center justify-between z-10">
         <span className="font-serif text-[0.95rem] tracking-[0.35em] text-champagne uppercase">
           {BUSINESS.name}
@@ -59,6 +53,18 @@ export function Hero() {
           Joyería de autor · {BUSINESS.location}
         </span>
       </header>
+
+      {/* Ornamento dorado decorativo (sólo desktop) — refuerza el lado vacío
+          ahora que removimos el video. Una línea vertical + diamond shape
+          al final, evocando una marca de orfebrería. */}
+      <div
+        aria-hidden
+        className="hidden lg:flex absolute right-14 top-1/2 -translate-y-1/2 flex-col items-center gap-6 z-[2] pointer-events-none"
+      >
+        <span className="block w-px h-32 bg-gradient-to-b from-transparent via-accent-gold/60 to-transparent" />
+        <span className="block w-2.5 h-2.5 bg-accent-gold rotate-45 shadow-[0_0_22px_oklch(65%_0.096_72/0.45)]" />
+        <span className="block w-px h-32 bg-gradient-to-b from-accent-gold/60 via-transparent to-transparent" />
+      </div>
 
       <motion.div
         className="mt-auto mb-auto max-w-7xl mx-auto w-full relative z-[3]"

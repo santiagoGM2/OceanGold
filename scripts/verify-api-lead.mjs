@@ -8,7 +8,7 @@
  *
  * Para usar contra preview público pasar OG_URL.
  */
-import { writeFileSync, mkdirSync, readFileSync } from "node:fs";
+import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 const URL = process.env.OG_URL || "http://localhost:3001";

@@ -197,6 +197,13 @@ export const COPY = {
       `${BUSINESS.yearsOfCraft} años de oficio artesanal en ${BUSINESS.location}`,
     ],
   },
+  gift: {
+    eyebrow: "El regalo perfecto",
+    title: "Hay regalos que se vuelven herencia",
+    body: "Una joya creada o restaurada a mano en nuestro taller no se queda en el momento — gana valor con cada año, con cada generación. Es el único regalo que se transforma en historia.",
+    cta: "Diseñar el regalo perfecto",
+    videoAlt: "Joya entregada como regalo perfecto en Ocean Gold Miami",
+  },
 } as const;
 
 /**

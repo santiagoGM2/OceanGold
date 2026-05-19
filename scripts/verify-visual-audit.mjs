@@ -9,8 +9,9 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 const URL = process.env.OG_URL || "http://localhost:3001";
-const OUT_DESK = join(process.cwd(), "screenshots", "faseF5", "audit", "1440");
-const OUT_MOB = join(process.cwd(), "screenshots", "faseF5", "audit", "375");
+const OUT_BASE = process.env.OG_OUT || join(process.cwd(), "screenshots", "faseF5", "audit");
+const OUT_DESK = join(OUT_BASE, "1440");
+const OUT_MOB = join(OUT_BASE, "375");
 mkdirSync(OUT_DESK, { recursive: true });
 mkdirSync(OUT_MOB, { recursive: true });
 

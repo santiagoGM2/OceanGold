@@ -3,6 +3,7 @@ import { Hero } from "@/components/sections/Hero";
 import BeforeAfter from "@/components/sections/BeforeAfterLazy";
 import { Situations } from "@/components/sections/Situations";
 import Testimonials from "@/components/sections/TestimonialsLazy";
+import { GiftVideoSection } from "@/components/sections/GiftVideoSection";
 import { Alert } from "@/components/sections/Alert";
 import { Authority } from "@/components/sections/Authority";
 import { LeadFormProvider } from "@/components/sections/LeadForm/leadFormContext";
@@ -23,6 +24,7 @@ export default function HomePage() {
         <BeforeAfter />
         <Situations />
         <Testimonials />
+        <GiftVideoSection />
         <Alert />
         <LeadForm />
         <Authority />

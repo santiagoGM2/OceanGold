@@ -25,8 +25,8 @@ type BeforeAfterSliderProps = {
   afterLabel?: string;
   /** Carga prioritaria de imágenes (LCP). Sólo el primer slider. */
   priority?: boolean;
-  /** Aspect ratio del contenedor (default 4:3). */
-  aspect?: "4/3" | "1/1" | "3/4";
+  /** Aspect ratio del contenedor (default 3:2 — coincide con las webps source 1536×1024). */
+  aspect?: "4/3" | "1/1" | "3/4" | "3/2" | "16/9";
 };
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -49,7 +49,7 @@ export function BeforeAfterSlider({
   beforeLabel = "Antes",
   afterLabel = "Después",
   priority = false,
-  aspect = "4/3",
+  aspect = "3/2",
 }: BeforeAfterSliderProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inView = useInView(containerRef, { once: true, amount: 0.3 });
@@ -107,7 +107,11 @@ export function BeforeAfterSlider({
       ? "aspect-square"
       : aspect === "3/4"
         ? "aspect-[3/4]"
-        : "aspect-[4/3]";
+        : aspect === "4/3"
+          ? "aspect-[4/3]"
+          : aspect === "16/9"
+            ? "aspect-[16/9]"
+            : "aspect-[3/2]";
 
   const updateFromClientX = (clientX: number) => {
     const el = containerRef.current;
