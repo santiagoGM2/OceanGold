@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import { BUSINESS, COPY } from "@/lib/constants";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
-import { Jewel } from "@/components/ui/Jewel";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -40,13 +39,6 @@ export function Authority() {
       id="autoridad"
       className="relative px-6 md:px-14 py-20 md:py-32 border-t border-border-subtle overflow-hidden"
     >
-      {/* Jewel flotante decorativo (solo desktop, pequeño) */}
-      <div
-        aria-hidden
-        className="hidden lg:block absolute right-[-3%] bottom-[8%] w-[220px] aspect-square pointer-events-none opacity-70"
-      >
-        <Jewel />
-      </div>
       <motion.div
         initial="hidden"
         animate={sectionInView ? "visible" : "hidden"}

@@ -23,9 +23,8 @@ const ContactSchema = z.object({
   email: z
     .string()
     .trim()
-    .email("Email inválido")
-    .optional()
-    .or(z.literal("")),
+    .min(1, "Ingresa tu email")
+    .email("Email inválido"),
 });
 
 type ContactValues = z.infer<typeof ContactSchema>;
@@ -177,16 +176,20 @@ export function Step4Contact() {
 
         <label className="block">
           <span className="block font-serif text-ivory text-lg mb-2">
-            Email <span className="text-text-muted text-sm font-light italic">(opcional)</span>
+            Email <span className="text-red-400 not-italic" aria-hidden="true">*</span>
+            <span className="sr-only">(obligatorio)</span>
           </span>
           <input
             type="email"
             autoComplete="email"
+            required
+            aria-required="true"
+            aria-invalid={errors.email ? "true" : "false"}
             {...register("email")}
             className="gold-focus w-full bg-surface-0/40 border border-border-subtle px-4 py-3 text-text-default font-light focus-visible:outline-none"
           />
           {errors.email && (
-            <span className="block text-sm text-red-300 mt-1.5 font-light">
+            <span className="block text-sm text-red-300 mt-1.5 font-light" role="alert">
               {errors.email.message}
             </span>
           )}

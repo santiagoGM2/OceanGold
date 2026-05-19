@@ -41,7 +41,7 @@ export function jewelryStoreSchema() {
     "@id": `${SITE_URL}#business`,
     name: BUSINESS.name,
     description:
-      "Reparación, transformación y personalización de joyas de autor en Downtown Miami. Especialistas en joyería cubana y latina de 10K y 14K. Diagnóstico gratuito virtual o presencial.",
+      "Reparación, transformación y personalización de joyas de autor en Downtown Miami. Especialistas en joyería cubana y latina en 10K, 14K, 18K, 22K y 24K. Diagnóstico gratuito virtual o presencial.",
     url: SITE_URL,
     image: `${SITE_URL}/og-image.jpg`,
     address: ADDRESS,

@@ -23,6 +23,7 @@
   --surface-1: var(--bg-1);
   --surface-2: var(--bg-2);
   --border-subtle: oklch(38% 0.045 72 / 0.18);
+  --border-strong: oklch(65% 0.096 72 / 0.3);
   --border-gold: var(--gold);
   --text-default: var(--text);
   --text-muted: var(--ivory-2);
@@ -31,8 +32,21 @@
   --accent-gold-soft: oklch(65% 0.096 72 / 0.12);
   --accent-gold-glow: oklch(65% 0.096 72 / 0.3);
 
-  /* Easing */
+  /* Alias semánticos (Fase F.5) — para nuevas plantillas, sin romper los nombres antiguos. */
+  --bg-base: var(--surface-0);
+  --bg-surface: var(--surface-1);
+  --bg-surface-hover: var(--surface-2);
+  --text-primary: var(--ivory);
+  --text-secondary: oklch(94% 0.010 85 / 0.7);
+
+  /* Easings */
   --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-emil: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Sombras semánticas (Fase F.5) */
+  --shadow-soft: 0 2px 8px oklch(0% 0 0 / 0.04);
+  --shadow-medium: 0 8px 24px oklch(0% 0 0 / 0.08);
+  --shadow-strong: 0 16px 48px oklch(0% 0 0 / 0.12);
 }
 
 @theme inline {
@@ -41,10 +55,13 @@
   --color-surface-1: var(--surface-1);
   --color-surface-2: var(--surface-2);
   --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
   --color-border-gold: var(--border-gold);
   --color-text-default: var(--text-default);
   --color-text-muted: var(--text-muted);
   --color-text-strong: var(--text-strong);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
   --color-accent-gold: var(--accent-gold);
   --color-accent-gold-soft: var(--accent-gold-soft);
   --color-accent-gold-glow: var(--accent-gold-glow);
@@ -59,8 +76,9 @@
   --font-serif: var(--font-cinzel), Georgia, serif;
   --font-sans: var(--font-jost), system-ui, sans-serif;
 
-  /* Easing */
+  /* Easings */
   --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-emil: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 * {
@@ -96,6 +114,55 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────
+   Tipografía premium (Fase F.5) — utilidades opcionales.
+   Aplicar con className para mantener compatibilidad con el resto
+   del sitio. Letter-spacing negativo en display serif Cinzel siguiendo
+   tendencia editorial premium 2025+.
+   ────────────────────────────────────────────────────────────── */
+.h1-display {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 5.5vw, 6rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+.h2-display {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(2rem, 4vw, 3.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+.h3-display {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: clamp(0.7rem, 0.85vw, 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+}
+/* Variante eyebrow "wide" (tracking 0.38em) — la firma del sitio.
+   La dejamos disponible para usos donde el espaciado amplio sí pega
+   visualmente (Hero, Authority). */
+.eyebrow-wide {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 300;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+}
+
+/* ──────────────────────────────────────────────────────────────
    Microinteracciones premium (Fase E.5)
    ────────────────────────────────────────────────────────────── */
 
@@ -105,7 +172,12 @@ body {
 .gold-cta {
   position: relative;
   overflow: hidden;
-  transition: transform 0.12s cubic-bezier(0.23, 1, 0.32, 1), color 0.3s, background-color 0.3s, border-color 0.3s;
+  /* Emil-style: 200ms con bezier (0.32, 0.72, 0, 1) en color/bg, scale 120ms más rápido */
+  transition:
+    transform 0.12s var(--ease-emil),
+    color 0.2s var(--ease-emil),
+    background-color 0.2s var(--ease-emil),
+    border-color 0.2s var(--ease-emil);
 }
 .gold-cta::after {
   content: "";
@@ -172,6 +244,22 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .input-shake { animation: none; }
+}
+
+/* h1 mobile fade-in (Fase F.5): CSS-only, sin JS, fuera del path React.
+   Reemplaza la animación stagger word-by-word en mobile que delayeaba el LCP.
+   El stagger se mantiene en desktop ≥1024px desde JSX (motion variants). */
+@media (max-width: 1023px) {
+  .h1-mobile-fade {
+    animation: h1-mobile-fade-anim 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes h1-mobile-fade-anim {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .h1-mobile-fade { animation: none; opacity: 1; }
 }
 
 /* Reduce-motion: desactivar animaciones globales */

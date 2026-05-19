@@ -10,12 +10,11 @@ import { track } from "@/lib/analytics";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 const PAIRS = [
-  { id: "01", beforeSrc: "/images/before-after/01-before.svg", afterSrc: "/images/before-after/01-after.svg", alt: "Anillo de compromiso recuperado" },
-  { id: "02", beforeSrc: "/images/before-after/02-before.svg", afterSrc: "/images/before-after/02-after.svg", alt: "Cadena cubana en oro 14K restaurada" },
-  { id: "03", beforeSrc: "/images/before-after/03-before.svg", afterSrc: "/images/before-after/03-after.svg", alt: "Anillo de herencia transformado" },
-  { id: "04", beforeSrc: "/images/before-after/04-before.svg", afterSrc: "/images/before-after/04-after.svg", alt: "Aretes pulidos y restaurados" },
-  { id: "05", beforeSrc: "/images/before-after/05-before.svg", afterSrc: "/images/before-after/05-after.svg", alt: "Brazalete latino armado y reforzado" },
-  { id: "06", beforeSrc: "/images/before-after/06-before.svg", afterSrc: "/images/before-after/06-after.svg", alt: "Pendiente de oro reconstruido" },
+  { id: "01", beforeSrc: "/images/before-after/1.webp", afterSrc: "/images/before-after/2.webp", alt: "Pieza recuperada por el taller Ocean Gold — caso 01" },
+  { id: "02", beforeSrc: "/images/before-after/3.webp", afterSrc: "/images/before-after/4.webp", alt: "Pieza recuperada por el taller Ocean Gold — caso 02" },
+  { id: "03", beforeSrc: "/images/before-after/5.webp", afterSrc: "/images/before-after/6.webp", alt: "Pieza recuperada por el taller Ocean Gold — caso 03" },
+  { id: "04", beforeSrc: "/images/before-after/7.webp", afterSrc: "/images/before-after/8.webp", alt: "Pieza recuperada por el taller Ocean Gold — caso 04" },
+  { id: "05", beforeSrc: "/images/before-after/9.webp", afterSrc: "/images/before-after/10.webp", alt: "Pieza recuperada por el taller Ocean Gold — caso 05" },
 ];
 
 type Breakpoint = "mobile" | "tablet" | "desktop";
@@ -133,7 +132,10 @@ export function BeforeAfter() {
                     afterSrc={p.afterSrc}
                     alt={p.alt}
                     playWelcomeAnimation={i === 0}
-                    priority={i === 0}
+                    // priority intencionalmente OFF en mobile: las imágenes
+                    // viven below-the-fold y el preload de next/image se
+                    // estaba comiendo ~10 pts de Lighthouse mobile.
+                    priority={false}
                   />
                 </div>
               ))}
@@ -166,7 +168,12 @@ export function BeforeAfter() {
                             afterSrc={p.afterSrc}
                             alt={p.alt}
                             playWelcomeAnimation={pageIdx === 0 && idx === 0}
-                            priority={pageIdx === 0 && idx === 0}
+                            // priority desactivado en SSR para evitar preload
+                            // de las webps en mobile (BeforeAfter está
+                            // below-the-fold y `useBreakpoint` default es
+                            // "desktop" durante SSR, lo que emitía link rel=preload
+                            // incluso para visitantes mobile).
+                            priority={false}
                           />
                         ))}
                     </div>
