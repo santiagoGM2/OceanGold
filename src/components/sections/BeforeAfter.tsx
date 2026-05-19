@@ -132,7 +132,7 @@ export function BeforeAfter() {
                     afterSrc={p.afterSrc}
                     alt={p.alt}
                     playWelcomeAnimation={i === 0}
-                    aspect="3/2"
+                    aspect="5/6"
                     priority={false}
                   />
                 </div>
@@ -166,7 +166,7 @@ export function BeforeAfter() {
                             afterSrc={p.afterSrc}
                             alt={p.alt}
                             playWelcomeAnimation={pageIdx === 0 && idx === 0}
-                            aspect="3/2"
+                            aspect="5/6"
                             priority={false}
                           />
                         ))}
