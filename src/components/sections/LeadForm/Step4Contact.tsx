@@ -137,8 +137,9 @@ export function Step4Contact() {
           <input
             type="text"
             autoComplete="name"
+            placeholder="Ej. María González"
             {...register("name")}
-            className="gold-focus w-full bg-surface-0/40 border border-border-subtle px-4 py-3 text-text-default font-light focus-visible:outline-none"
+            className="gold-focus w-full bg-surface-0/40 border border-border-subtle rounded-md px-4 py-3 text-text-default font-light focus-visible:outline-none placeholder:text-text-muted/55"
           />
           {errors.name && (
             <span className="block text-sm text-red-300 mt-1.5 font-light">
@@ -151,15 +152,16 @@ export function Step4Contact() {
           <span className="block font-serif text-ivory text-lg mb-2">
             Número de celular
           </span>
-          <div className="phone-input-wrap bg-surface-0/40 border border-border-subtle focus-within:border-accent-gold transition-colors">
+          <div className="phone-input-wrap bg-surface-0/40 border border-border-subtle rounded-md focus-within:border-accent-gold transition-colors">
             <PhoneInput
               international
               defaultCountry="US"
+              placeholder="305 123 4567"
               value={phoneValue || undefined}
               onChange={(v) => setValue("phone", v ?? "", { shouldValidate: true })}
               numberInputProps={{
                 className:
-                  "w-full bg-transparent px-4 py-3 text-text-default font-light focus-visible:outline-none border-0",
+                  "w-full bg-transparent px-4 py-3 text-text-default font-light focus-visible:outline-none border-0 placeholder:text-text-muted/55",
               }}
               countrySelectProps={{
                 "aria-label": "Selecciona el código de país",
@@ -182,11 +184,12 @@ export function Step4Contact() {
           <input
             type="email"
             autoComplete="email"
+            placeholder="tu@correo.com"
             required
             aria-required="true"
             aria-invalid={errors.email ? "true" : "false"}
             {...register("email")}
-            className="gold-focus w-full bg-surface-0/40 border border-border-subtle px-4 py-3 text-text-default font-light focus-visible:outline-none"
+            className="gold-focus w-full bg-surface-0/40 border border-border-subtle rounded-md px-4 py-3 text-text-default font-light focus-visible:outline-none placeholder:text-text-muted/55"
           />
           {errors.email && (
             <span className="block text-sm text-red-300 mt-1.5 font-light" role="alert">

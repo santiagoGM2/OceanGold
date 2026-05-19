@@ -7,12 +7,10 @@
  * stacking en mobile.
  *
  * Video behavior:
- *   - Desktop (≥1024px): autoplay loop muted playsInline al entrar al viewport.
+ *   - Desktop + Mobile: autoplay loop muted playsInline al entrar al viewport.
  *     Sources se adjuntan via JS sólo cuando inView=true para no descargar
- *     bytes antes de que la sección sea visible.
- *   - Mobile (<1024px): poster-only (consistente con la decisión Fase F.5 de
- *     no descargar 3.5MB de video en mobile). El gesto del usuario (scroll
- *     hasta esta sección) ya implica intención; podemos cargar el poster.
+ *     bytes antes de que la sección sea visible (no afecta LCP porque está
+ *     below-the-fold después de Testimonios).
  *   - `prefers-reduced-motion`: poster-only en todo viewport.
  *
  * Aspect ratio del frame del video: 9/16 portrait (matching la fuente
@@ -48,10 +46,11 @@ export function GiftVideoSection() {
   useEffect(() => {
     if (!inView || reduce) return;
     if (typeof window === "undefined") return;
-    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
-    if (!isDesktop) return;
     const v = videoRef.current;
     if (!v) return;
+    // Adjuntar sources y reproducir en loop tanto en desktop como mobile.
+    // Like inView gating prevents downloading until the user has scrolled
+    // to this section → no impacto en LCP del Hero.
     attachSources(v);
     const p = v.play();
     if (p && typeof p.catch === "function") p.catch(() => {});

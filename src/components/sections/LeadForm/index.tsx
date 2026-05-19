@@ -52,8 +52,15 @@ export function LeadForm() {
         {/* Container del formulario con borde dorado + glow pulsante.
             La clase `lead-form-card` aplica una animación CSS que pulsa el
             box-shadow del marco, dejando claro que es el área interactiva
-            principal de la página. */}
+            principal de la página.
+            Esquinas L doradas decorativas refuerzan la sensación de "marco
+            artesanal" — coherente con el frame del video de El Regalo Perfecto. */}
         <div className="lead-form-card relative bg-surface-1/60 backdrop-blur-sm p-6 md:p-10 rounded-lg border border-accent-gold/45">
+          <span aria-hidden className="pointer-events-none absolute top-0 left-0 w-5 h-5 border-l-2 border-t-2 border-accent-gold rounded-tl-md" />
+          <span aria-hidden className="pointer-events-none absolute top-0 right-0 w-5 h-5 border-r-2 border-t-2 border-accent-gold rounded-tr-md" />
+          <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 w-5 h-5 border-l-2 border-b-2 border-accent-gold rounded-bl-md" />
+          <span aria-hidden className="pointer-events-none absolute bottom-0 right-0 w-5 h-5 border-r-2 border-b-2 border-accent-gold rounded-br-md" />
+
           <ProgressBar current={state.step} />
 
           <AnimatePresence mode="wait" initial={false}>
