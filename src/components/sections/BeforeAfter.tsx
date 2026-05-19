@@ -1,11 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BeforeAfterSlider } from "@/components/ui/BeforeAfterSlider";
 import { COPY } from "@/lib/constants";
 import { track } from "@/lib/analytics";
+
+// Tiempo de inactividad antes de pasar al siguiente par en mobile.
+// Demasiado corto = se siente que se cambia solo mientras interactúan;
+// demasiado largo = el usuario se queda atascado en un par.
+const MOBILE_AUTO_ADVANCE_MS = 3500;
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -39,7 +44,7 @@ export function BeforeAfter() {
   const reduce = useReducedMotion();
   const bp = useBreakpoint();
   const perPage = bp === "desktop" ? 3 : bp === "tablet" ? 2 : 1;
-  const totalPages = Math.ceil(PAIRS.length / perPage);
+  const totalPages = bp === "mobile" ? PAIRS.length : Math.ceil(PAIRS.length / perPage);
   const [rawPage, setRawPage] = useState(0);
 
   // Clampamos en render para no necesitar un effect que sincronice page con totalPages.
@@ -63,6 +68,39 @@ export function BeforeAfter() {
       behavior: reduce ? "instant" : "smooth",
     });
   }, [page, bp, reduce]);
+
+  // Mobile: auto-avance entre pares cuando el usuario lleva un rato sin
+  // interactuar con el slider activo. Cada interacción reinicia el timer.
+  // En reduced-motion, NO auto-avanza — sólo manual con los dots.
+  const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearAdvanceTimer = useCallback(() => {
+    if (advanceTimerRef.current) {
+      clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = null;
+    }
+  }, []);
+  const scheduleAdvance = useCallback(() => {
+    clearAdvanceTimer();
+    if (reduce) return;
+    advanceTimerRef.current = setTimeout(() => {
+      setRawPage((p) => (p + 1) % PAIRS.length);
+    }, MOBILE_AUTO_ADVANCE_MS);
+  }, [clearAdvanceTimer, reduce]);
+
+  useEffect(() => {
+    if (bp !== "mobile" || !inView) {
+      clearAdvanceTimer();
+      return;
+    }
+    scheduleAdvance();
+    return clearAdvanceTimer;
+  }, [bp, inView, page, scheduleAdvance, clearAdvanceTimer]);
+
+  const handleInteract = useCallback(() => {
+    if (bp !== "mobile") return;
+    // El usuario está moviendo el slider — reiniciar el timer de auto-avance.
+    scheduleAdvance();
+  }, [bp, scheduleAdvance]);
 
   const visiblePairs = PAIRS;
 
@@ -117,26 +155,31 @@ export function BeforeAfter() {
         {/* Carousel container */}
         <motion.div variants={headerIn} className="group relative">
           {bp === "mobile" ? (
-            // Móvil: swipe nativo con snap-scroll
-            <div
-              className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-6 px-6"
-              style={{ touchAction: "pan-x pan-y", scrollbarWidth: "thin" }}
-            >
-              {visiblePairs.map((p, i) => (
-                <div
-                  key={p.id}
-                  className="flex-shrink-0 w-[88%] snap-start"
+            // Móvil: UN par a la vez. Crossfade entre pares (3.5s tras última
+            // interacción). El usuario interactúa con el slider activo,
+            // dejar de interactuar dispara el avance al siguiente par.
+            // Sin snap-scroll horizontal → el drag del divisor dorado no
+            // compite con el gesture del scroll y se siente fluido.
+            <div className="relative">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={visiblePairs[page]?.id ?? "ba-pair"}
+                  initial={reduce ? { opacity: 1 } : { opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
+                  transition={{ duration: reduce ? 0 : 0.5, ease: EASE }}
                 >
                   <BeforeAfterSlider
-                    beforeSrc={p.beforeSrc}
-                    afterSrc={p.afterSrc}
-                    alt={p.alt}
-                    playWelcomeAnimation={i === 0}
+                    beforeSrc={visiblePairs[page].beforeSrc}
+                    afterSrc={visiblePairs[page].afterSrc}
+                    alt={visiblePairs[page].alt}
+                    playWelcomeAnimation={page === 0}
                     aspect="5/6"
                     priority={false}
+                    onInteract={handleInteract}
                   />
-                </div>
-              ))}
+                </motion.div>
+              </AnimatePresence>
             </div>
           ) : (
             // Desktop/Tablet: paginación con flechas
@@ -209,28 +252,46 @@ export function BeforeAfter() {
           variants={headerIn}
           className="mt-10 flex flex-col md:flex-row md:items-center md:justify-between gap-8"
         >
-          {bp !== "mobile" && totalPages > 1 ? (
+          {totalPages > 1 ? (
             <div
-              className="flex items-center gap-3"
+              className="flex items-center justify-center md:justify-start gap-2.5"
               role="tablist"
-              aria-label="Páginas de comparaciones"
+              aria-label={bp === "mobile" ? "Pares antes y después" : "Páginas de comparaciones"}
             >
-              {Array.from({ length: totalPages }).map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  role="tab"
-                  aria-selected={i === page}
-                  aria-label={`Página ${i + 1} de ${totalPages}`}
-                  onClick={() => setPage(i)}
-                  className={
-                    "h-[2px] transition-all duration-500 cursor-pointer " +
-                    (i === page
-                      ? "w-12 bg-accent-gold"
-                      : "w-6 bg-border-subtle hover:bg-accent-gold/50")
-                  }
-                />
-              ))}
+              {Array.from({ length: totalPages }).map((_, i) => {
+                const active = i === page;
+                // Mobile: dots redondos premium (uno por par). Desktop/tablet:
+                // barras horizontales con la activa más larga.
+                const isMobile = bp === "mobile";
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    aria-label={
+                      isMobile
+                        ? `Ver par ${i + 1} de ${totalPages}`
+                        : `Página ${i + 1} de ${totalPages}`
+                    }
+                    onClick={() => {
+                      setPage(i);
+                      if (isMobile) handleInteract();
+                    }}
+                    className={
+                      isMobile
+                        ? "h-2.5 rounded-full transition-all duration-300 cursor-pointer " +
+                          (active
+                            ? "w-7 bg-accent-gold shadow-[0_0_10px_oklch(65%_0.096_72/0.5)]"
+                            : "w-2.5 bg-border-subtle hover:bg-accent-gold/50")
+                        : "h-[2px] transition-all duration-500 cursor-pointer " +
+                          (active
+                            ? "w-12 bg-accent-gold"
+                            : "w-6 bg-border-subtle hover:bg-accent-gold/50")
+                    }
+                  />
+                );
+              })}
             </div>
           ) : (
             <div />

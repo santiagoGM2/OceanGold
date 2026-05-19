@@ -28,6 +28,9 @@ type BeforeAfterSliderProps = {
   /** Aspect ratio del contenedor. Default 5:6 portrait — coincide con el
    *  viewBox del SVG source (1260×1500) rasterizado por sharp. */
   aspect?: "4/3" | "1/1" | "3/4" | "3/2" | "16/9" | "5/6";
+  /** Callback que dispara en cada interacción granular (pointer drag, key).
+   *  Útil para que el padre resetee un timer de auto-avance del carousel. */
+  onInteract?: () => void;
 };
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -51,6 +54,7 @@ export function BeforeAfterSlider({
   afterLabel = "Después",
   priority = false,
   aspect = "5/6",
+  onInteract,
 }: BeforeAfterSliderProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inView = useInView(containerRef, { once: true, amount: 0.3 });
@@ -123,9 +127,13 @@ export function BeforeAfterSlider({
     const ratio = (clientX - rect.left) / rect.width;
     const next = Math.max(0, Math.min(100, ratio * 100));
     position.set(next);
+    // Cada movimiento del slider cuenta como interacción granular para el padre
+    // (e.g. para resetear timers de auto-avance del carousel mobile).
+    onInteract?.();
   };
 
   const markInteracted = () => {
+    onInteract?.();
     if (interactedRef.current) return;
     interactedRef.current = true;
     track("before_after_interacted");

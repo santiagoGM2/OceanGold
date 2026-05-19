@@ -35,18 +35,25 @@ export function LeadForm() {
       className="relative px-6 md:px-14 py-20 md:py-28 scroll-mt-20 border-t border-border-subtle"
     >
       <div className="max-w-7xl mx-auto">
-        <span className="block text-[0.67rem] tracking-[0.4em] uppercase text-accent-gold mb-5 font-light">
-          Diagnóstico gratuito · {BUSINESS.diagnosticDuration}
+        {/* Eyebrow prominente con marker dorado izquierdo — señal visual fuerte
+            de que aquí empieza el flujo principal de conversión. */}
+        <span className="inline-flex items-center gap-3 text-[0.72rem] tracking-[0.4em] uppercase text-accent-gold mb-5 font-medium">
+          <span aria-hidden className="block w-7 h-px bg-accent-gold" />
+          Inicia aquí · Diagnóstico gratuito · {BUSINESS.diagnosticDuration}
         </span>
-        <h2 className="font-serif text-[clamp(2rem,4vw,3.5rem)] text-ivory font-light leading-[1.08] tracking-[0.02em] mb-3">
+        <h2 className="font-serif text-[clamp(2.2rem,4.4vw,3.85rem)] text-ivory font-light leading-[1.05] tracking-[-0.015em] mb-4">
           Tu joya merece su siguiente capítulo
         </h2>
-        <p className="text-text-muted font-light max-w-2xl mb-10">
+        <p className="text-text-muted font-light text-[clamp(0.98rem,1.4vw,1.1rem)] leading-[1.75] max-w-2xl mb-10">
           Te tomará 2 minutos completar este formulario. Al final agendas tu cita
           virtual o presencial — la decides tú.
         </p>
 
-        <div className="border border-border-subtle bg-surface-1/60 backdrop-blur-sm p-6 md:p-10">
+        {/* Container del formulario con borde dorado + glow pulsante.
+            La clase `lead-form-card` aplica una animación CSS que pulsa el
+            box-shadow del marco, dejando claro que es el área interactiva
+            principal de la página. */}
+        <div className="lead-form-card relative bg-surface-1/60 backdrop-blur-sm p-6 md:p-10 rounded-lg border border-accent-gold/45">
           <ProgressBar current={state.step} />
 
           <AnimatePresence mode="wait" initial={false}>
