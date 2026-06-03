@@ -31,7 +31,7 @@ type ContactValues = z.infer<typeof ContactSchema>;
 
 export function Step4Contact() {
   const reduce = useReducedMotion();
-  const { state, setContact, go, submitStart, submitDone, submitFail } =
+  const { state, setContact, go, submitStart, submitDone, submitFail, buildPayload } =
     useLeadForm();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -57,14 +57,19 @@ export function Step4Contact() {
     setContact(data.name.trim(), data.phone, data.email?.trim() ?? "");
     submitStart();
 
+    // `buildPayload()` aplana el quizAnswers interno (rich shape
+    // { values, otherText }) a Record<string, string> que es lo que
+    // valida `LeadInputSchema` en /api/lead. Antes pasábamos la shape
+    // rica directo y Zod lo rechazaba con 400.
+    const base = buildPayload();
     const payload = {
       name: data.name.trim(),
       phone: data.phone,
       email: data.email?.trim() ?? "",
-      service: state.draft.service,
-      feeling: state.draft.feeling,
-      quizAnswers: state.draft.quizAnswers,
-      photoDataUrl: state.draft.photoUrl ?? undefined,
+      service: base.service,
+      feeling: base.feeling,
+      quizAnswers: base.quizAnswers,
+      photoDataUrl: base.photoUrl ?? undefined,
     };
 
     try {

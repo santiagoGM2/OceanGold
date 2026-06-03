@@ -22,9 +22,9 @@ export default function HomePage() {
 
         <Hero />
         <BeforeAfter />
+        <GiftVideoSection />
         <Situations />
         <Testimonials />
-        <GiftVideoSection />
         <Alert />
         <LeadForm />
         <Authority />

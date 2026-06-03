@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { BUSINESS, COPY, STATS } from "@/lib/constants";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { HeroVideoBackground } from "@/components/sections/HeroVideoBackground";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -45,6 +46,8 @@ export function Hero() {
       id="hero"
       className="relative min-h-[100svh] flex flex-col px-6 md:px-14 py-20 md:py-32 isolate overflow-hidden"
     >
+      <HeroVideoBackground />
+
       <header className="absolute top-8 left-6 right-6 md:top-10 md:left-14 md:right-14 flex items-center justify-between z-10">
         <span className="font-serif text-[0.95rem] tracking-[0.35em] text-champagne uppercase">
           {BUSINESS.name}
