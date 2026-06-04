@@ -195,6 +195,28 @@ body {
   }
 }
 
+/* Ken Burns sutil para imágenes de fondo de secciones (Alert).
+   Escala de 1.04 → 1.12 en 22s, ping-pong. Cero JS, GPU-accelerated.
+   El parallax adicional via Motion useScroll superpone sin conflicto.  */
+.alert-ken-burns {
+  will-change: transform;
+}
+.alert-ken-burns img {
+  animation: alert-ken-burns-zoom 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes alert-ken-burns-zoom {
+  0% {
+    transform: scale(1.04) translateX(-1%);
+  }
+  100% {
+    transform: scale(1.12) translateX(2%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .alert-ken-burns img { animation: none; transform: scale(1.05); }
+}
+
 /* `gold-cta` aplica al botón dorado con border-accent-gold:
    - shine que viaja al hover (gradient lineal claro)
    - scale 0.97 en :active (Emil's principle) */
