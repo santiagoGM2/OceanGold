@@ -52,11 +52,20 @@ export function Authority() {
           {COPY.authority.eyebrow}
         </motion.span>
 
+        {/* H2 con el wordmark "DuJoyero" renderizado en Italiana — refuerza
+            la identidad de marca en el cierre de credibilidad. Separamos
+            "Por qué" del nombre para aplicar la fuente sólo al wordmark. */}
         <motion.h2
           variants={fadeUp}
           className="font-serif text-[clamp(2rem,4vw,3.5rem)] text-ivory font-light leading-[1.08] tracking-[0.02em] mb-14 max-w-4xl"
         >
-          {COPY.authority.title}
+          Por qué{" "}
+          <span
+            className="text-champagne"
+            style={{ fontFamily: "var(--font-wordmark)", letterSpacing: "0.01em" }}
+          >
+            {BUSINESS.name}
+          </span>
         </motion.h2>
 
         {/* Stats grandes — comparten AnimatedCounter con el Hero */}

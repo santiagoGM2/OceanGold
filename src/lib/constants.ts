@@ -5,7 +5,7 @@
  */
 
 export const BUSINESS = {
-  name: "Ocean Gold",
+  name: "DuJoyero",
   tagline: "El Renacimiento de tu Joya",
   location: "Miami, FL",
   address: {
@@ -190,7 +190,7 @@ export const COPY = {
   },
   authority: {
     eyebrow: "Autoridad y estatus",
-    title: "Por qué Ocean Gold",
+    title: "Por qué DuJoyero",
     points: [
       `+${BUSINESS.storiesRecovered.toLocaleString("es")} historias recuperadas`,
       "Expertos en evolución de oro y piedras preciosas",
@@ -202,7 +202,7 @@ export const COPY = {
     title: "Hay regalos que se vuelven herencia",
     body: "Una joya creada o restaurada a mano en nuestro taller no se queda en el momento — gana valor con cada año, con cada generación. Es el único regalo que se transforma en historia.",
     cta: "Diseñar el regalo perfecto",
-    videoAlt: "Joya entregada como regalo perfecto en Ocean Gold Miami",
+    videoAlt: "Joya entregada como regalo perfecto en DuJoyero Miami",
   },
 } as const;
 

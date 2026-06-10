@@ -15,11 +15,11 @@ const MOBILE_AUTO_ADVANCE_MS = 3500;
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 const PAIRS = [
-  { id: "01", beforeSrc: "/images/before-after/1.webp", afterSrc: "/images/before-after/2.webp", alt: "Pieza recuperada por el taller Ocean Gold — caso 01" },
-  { id: "02", beforeSrc: "/images/before-after/3.webp", afterSrc: "/images/before-after/4.webp", alt: "Pieza recuperada por el taller Ocean Gold — caso 02" },
-  { id: "03", beforeSrc: "/images/before-after/5.webp", afterSrc: "/images/before-after/6.webp", alt: "Pieza recuperada por el taller Ocean Gold — caso 03" },
-  { id: "04", beforeSrc: "/images/before-after/7.webp", afterSrc: "/images/before-after/8.webp", alt: "Pieza recuperada por el taller Ocean Gold — caso 04" },
-  { id: "05", beforeSrc: "/images/before-after/9.webp", afterSrc: "/images/before-after/10.webp", alt: "Pieza recuperada por el taller Ocean Gold — caso 05" },
+  { id: "01", beforeSrc: "/images/before-after/1.webp", afterSrc: "/images/before-after/2.webp", alt: "Pieza recuperada por el taller DuJoyero — caso 01" },
+  { id: "02", beforeSrc: "/images/before-after/3.webp", afterSrc: "/images/before-after/4.webp", alt: "Pieza recuperada por el taller DuJoyero — caso 02" },
+  { id: "03", beforeSrc: "/images/before-after/5.webp", afterSrc: "/images/before-after/6.webp", alt: "Pieza recuperada por el taller DuJoyero — caso 03" },
+  { id: "04", beforeSrc: "/images/before-after/7.webp", afterSrc: "/images/before-after/8.webp", alt: "Pieza recuperada por el taller DuJoyero — caso 04" },
+  { id: "05", beforeSrc: "/images/before-after/9.webp", afterSrc: "/images/before-after/10.webp", alt: "Pieza recuperada por el taller DuJoyero — caso 05" },
 ];
 
 type Breakpoint = "mobile" | "tablet" | "desktop";

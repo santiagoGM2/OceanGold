@@ -126,7 +126,7 @@ export function Step5Calendar() {
         <iframe
           ref={iframeRef}
           src={calendarSrc}
-          title="Agenda tu diagnóstico Ocean Gold"
+          title="Agenda tu diagnóstico DuJoyero"
           className="w-full min-h-[640px] block"
           style={{ border: "none" }}
           onLoad={() => {

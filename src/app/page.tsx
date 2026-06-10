@@ -31,13 +31,21 @@ export default function HomePage() {
 
         <footer className="relative px-6 md:px-14 py-10 border-t border-border-subtle">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <span className="font-serif tracking-[0.35em] text-champagne uppercase text-sm">
+            <span
+              className="text-champagne font-normal tracking-[0.02em] text-[1.2rem] leading-none"
+              style={{ fontFamily: "var(--font-wordmark)" }}
+            >
               {BUSINESS.name}
             </span>
             <span className="text-xs text-text-muted text-center md:text-right">
               {BUSINESS.address.street} · {BUSINESS.address.neighborhood},{" "}
               {BUSINESS.address.region} · © {new Date().getFullYear()}{" "}
-              {BUSINESS.name}
+              <span
+                className="text-champagne"
+                style={{ fontFamily: "var(--font-wordmark)", fontSize: "0.95rem" }}
+              >
+                {BUSINESS.name}
+              </span>
             </span>
           </div>
         </footer>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cinzel, Jost } from "next/font/google";
+import { Cinzel, Italiana, Jost } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { BUSINESS, COPY, SITE_URL } from "@/lib/constants";
@@ -15,6 +15,17 @@ const cinzel = Cinzel({
   variable: "--font-cinzel",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+// Italiana — fuente fashion/luxury jewelry diseñada para alto contraste y
+// elegancia editorial. Reservada para el wordmark "DuJoyero" en el Hero
+// header, footer y Authority h2. Su geometría delgada con remates altos
+// evoca joyería de autor y prestigio.
+const italiana = Italiana({
+  variable: "--font-italiana",
+  subsets: ["latin"],
+  weight: ["400"],
   display: "swap",
 });
 
@@ -48,7 +59,7 @@ export const metadata: Metadata = {
     "transformación de oro",
     "joyería de autor",
     "diseño de joyas personalizado",
-    "Ocean Gold",
+    "DuJoyero",
     "Miami FL",
   ],
   openGraph: {
@@ -89,7 +100,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${cinzel.variable} ${jost.variable} antialiased`}
+      className={`${cinzel.variable} ${italiana.variable} ${jost.variable} antialiased`}
     >
       <head>
         {/* El poster ya no es candidato LCP del Hero (Fase F.5.1 removió el

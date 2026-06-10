@@ -75,6 +75,7 @@
   /* Tipografía expuesta a Tailwind */
   --font-serif: var(--font-cinzel), Georgia, serif;
   --font-sans: var(--font-jost), system-ui, sans-serif;
+  --font-wordmark: var(--font-italiana), "Cormorant Garamond", Georgia, serif;
 
   /* Easings */
   --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);

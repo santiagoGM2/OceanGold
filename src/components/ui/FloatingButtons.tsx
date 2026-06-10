@@ -11,7 +11,7 @@ import { track } from "@/lib/analytics";
  * Ambos expanden el texto al hover (desktop) y permanecen compactos en mobile.
  */
 const WA_MESSAGE =
-  "Hola Ocean Gold, vi su sitio y quiero hablar con un asesor sobre mi joya.";
+  "Hola DuJoyero, vi su sitio y quiero hablar con un asesor sobre mi joya.";
 
 export function FloatingButtons() {
   const waUrl = buildWhatsAppUrl(WA_MESSAGE);

@@ -49,7 +49,13 @@ export function Hero() {
       <HeroVideoBackground />
 
       <header className="absolute top-8 left-6 right-6 md:top-10 md:left-14 md:right-14 flex items-center justify-between z-10">
-        <span className="font-serif text-[0.95rem] tracking-[0.35em] text-champagne uppercase">
+        {/* Wordmark del brand — Italiana, fuente diseñada para joyería de lujo.
+            Mixed case respeta la grafía del cliente "DuJoyero" (Du + Joyero).
+            tracking ligero (0.02em) para que las letras respiren sin perderse. */}
+        <span
+          className="text-champagne font-normal tracking-[0.02em] text-[clamp(1.4rem,1.6vw,1.7rem)] leading-none"
+          style={{ fontFamily: "var(--font-wordmark)" }}
+        >
           {BUSINESS.name}
         </span>
         <span className="hidden md:inline text-[0.68rem] font-light tracking-[0.38em] text-accent-gold uppercase">
