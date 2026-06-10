@@ -8,9 +8,11 @@
  *
  * Video behavior:
  *   - Desktop + Mobile: autoplay loop muted playsInline al entrar al viewport.
- *     Sources se adjuntan via JS sólo cuando inView=true para no descargar
- *     bytes antes de que la sección sea visible (no afecta LCP porque está
- *     below-the-fold después de Testimonios).
+ *     Sources se adjuntan via JS sólo cuando se entra por primera vez al
+ *     viewport (no descarga bytes antes).
+ *   - **PAUSA al salir del viewport** (IntersectionObserver via useInView con
+ *     once:false). Cuando vuelves a hacer scroll a la sección, RESUME desde
+ *     donde quedó. Elimina la carga sostenida de GPU/CPU cuando ya no se ve.
  *   - `prefers-reduced-motion`: poster-only en todo viewport.
  *
  * Aspect ratio del frame del video: 9/16 portrait (matching la fuente
@@ -41,20 +43,30 @@ export function GiftVideoSection() {
   const reduce = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const inView = useInView(sectionRef, { once: true, amount: 0.25 });
+  // Dos observers separados para evitar acoplar reveal y pause:
+  // - inViewContent (once:true): el stagger se dispara UNA vez y se queda.
+  // - inViewVideo (once:false): tracking continuo para pausar/reanudar.
+  const inViewContent = useInView(sectionRef, { once: true, amount: 0.25 });
+  const inViewVideo = useInView(sectionRef, { once: false, amount: 0.25 });
+  const sourcesAttached = useRef(false);
 
   useEffect(() => {
-    if (!inView || reduce) return;
+    if (reduce) return;
     if (typeof window === "undefined") return;
     const v = videoRef.current;
     if (!v) return;
-    // Adjuntar sources y reproducir en loop tanto en desktop como mobile.
-    // Like inView gating prevents downloading until the user has scrolled
-    // to this section → no impacto en LCP del Hero.
-    attachSources(v);
-    const p = v.play();
-    if (p && typeof p.catch === "function") p.catch(() => {});
-  }, [inView, reduce]);
+    if (inViewVideo) {
+      if (!sourcesAttached.current) {
+        attachSources(v);
+        sourcesAttached.current = true;
+      }
+      const p = v.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    } else if (sourcesAttached.current) {
+      // PAUSE al salir del viewport — libera GPU.
+      v.pause();
+    }
+  }, [inViewVideo, reduce]);
 
   const fadeUp = {
     hidden: reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
@@ -80,7 +92,9 @@ export function GiftVideoSection() {
     >
       <motion.div
         initial="hidden"
-        animate={inView ? "visible" : "hidden"}
+        // Stagger del contenido se dispara una sola vez (inViewContent
+        // tiene once:true) — independiente del pause/play del video.
+        animate={inViewContent ? "visible" : "hidden"}
         variants={stagger}
         className="max-w-7xl mx-auto"
       >
