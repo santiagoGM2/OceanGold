@@ -211,13 +211,10 @@ export function Hero() {
             <span aria-hidden>→</span>
           </a>
           <span
-            className="text-[0.72rem] tracking-[0.18em] uppercase text-ivory/80 font-light leading-[1.5]"
+            className="text-[0.72rem] tracking-[0.22em] uppercase text-ivory/85 font-medium leading-[1.5]"
             style={{ textShadow: "0 1px 10px oklch(0% 0 0 / 0.45)" }}
           >
-            <span className="block text-accent-gold/90 font-medium">Sin costo</span>
-            <span className="block text-ivory/60 text-[0.65rem] mt-0.5">
-              Toma {BUSINESS.diagnosticDuration}
-            </span>
+            Solo toma 1 minuto
           </span>
         </motion.div>
       </motion.div>
