@@ -4,7 +4,7 @@
  * Confirmación final del flujo de diagnóstico premium.
  *
  * Reemplaza al embed del calendario GHL. La conversión real ocurre al hacer
- * clic en el CTA de WhatsApp: abrimos un `wa.me` con mensaje pre-rellenado
+ * clic en el CTA de WhatsApp: abrimos `api.whatsapp.com/send` con mensaje pre-rellenado
  * que incluye el nombre y el sentimiento capturados en el quiz, de modo que
  * el asesor recibe contexto antes del primer mensaje del cliente.
  *

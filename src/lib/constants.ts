@@ -35,7 +35,7 @@ export const BUSINESS = {
   ],
 } as const;
 
-// Número real de DuJoyero Miami: +1 (305) 413-3739 — formato wa.me E.164 sin "+".
+// Número real de DuJoyero Miami: +1 (305) 413-3739 — formato E.164 sin "+".
 export const WHATSAPP_NUMBER =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "13054133739";
 
@@ -218,5 +218,7 @@ export function buildPostFormWhatsAppMessage(opts: {
 }
 
 export function buildWhatsAppUrl(message: string): string {
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  // Formato api.whatsapp.com/send — más confiable que wa.me para abrir el
+  // chat directo con el mensaje pre-rellenado (especialmente en desktop).
+  return `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(message)}`;
 }
