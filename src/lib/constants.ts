@@ -36,8 +36,10 @@ export const BUSINESS = {
 } as const;
 
 // Número real de DuJoyero Miami: +1 (305) 413-3739 — formato E.164 sin "+".
-export const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "13054133739";
+// Hardcoded a propósito: el env var NEXT_PUBLIC_WHATSAPP_NUMBER en Vercel
+// puede tener un placeholder antiguo (13055551234) que sobreescribiría el
+// fallback. Si el cliente algún día cambia de número, se actualiza aquí.
+export const WHATSAPP_NUMBER = "13054133739";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://oceangold.example.com";
