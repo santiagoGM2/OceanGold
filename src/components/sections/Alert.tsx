@@ -180,7 +180,7 @@ export function Alert() {
       >
         <motion.span
           variants={fadeUp}
-          className="inline-flex items-center gap-3 text-[0.68rem] tracking-[0.4em] uppercase text-accent-gold mb-7 font-medium drop-shadow-[0_1px_8px_oklch(0%_0_0/0.6)]"
+          className="inline-flex items-center gap-3 text-[0.67rem] tracking-[0.4em] uppercase text-accent-gold mb-7 font-medium drop-shadow-[0_1px_8px_oklch(0%_0_0/0.6)]"
         >
           <span aria-hidden className="block w-7 h-px bg-accent-gold" />
           {COPY.alert.eyebrow}

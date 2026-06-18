@@ -102,7 +102,7 @@ export function Hero() {
         >
           {BUSINESS.name}
         </span>
-        <span className="hidden md:inline text-[0.68rem] font-light tracking-[0.38em] text-accent-gold uppercase">
+        <span className="hidden md:inline text-[0.67rem] font-light tracking-[0.4em] text-accent-gold uppercase">
           Joyería de autor en {BUSINESS.location}
         </span>
       </header>
@@ -113,11 +113,13 @@ export function Hero() {
         animate="visible"
         variants={containerVariants}
       >
-        {/* Eyebrow con línea editorial */}
+        {/* Eyebrow con línea editorial. Mantiene font-medium para legibilidad
+            sobre el video (única excepción a la regla canonical font-light;
+            las demás secciones van sobre surface sólido). */}
         <motion.div variants={fadeUp} className="flex items-center gap-4 mb-8">
           <span aria-hidden className="block w-10 h-px bg-accent-gold" />
           <span
-            className="text-[0.7rem] font-medium tracking-[0.38em] text-accent-gold uppercase"
+            className="text-[0.67rem] font-medium tracking-[0.4em] text-accent-gold uppercase"
             style={{ textShadow: "0 1px 14px oklch(0% 0 0 / 0.5)" }}
           >
             El renacimiento de tu joya
@@ -203,7 +205,7 @@ export function Hero() {
             href="#diagnostico"
             data-cta-section="hero"
             data-cta-label={COPY.hero.cta}
-            className="cta-pulse gold-cta inline-flex items-center justify-center gap-4 px-9 md:px-11 py-4 md:py-[1.05rem] border border-accent-gold bg-accent-gold text-surface-0 font-sans font-medium text-[0.74rem] md:text-[0.78rem] tracking-[0.24em] uppercase hover:bg-gold-l rounded-sm shadow-[0_10px_30px_oklch(0%_0_0/0.4)]"
+            className="cta-pulse gold-cta inline-flex items-center justify-center gap-4 px-9 md:px-11 py-4 md:py-[1.05rem] border border-accent-gold bg-accent-gold text-surface-0 font-sans font-medium text-[0.74rem] md:text-[0.78rem] tracking-[0.25em] uppercase hover:bg-gold-l rounded-sm shadow-[0_10px_30px_oklch(0%_0_0/0.4)]"
           >
             {COPY.hero.cta}
             <span aria-hidden>→</span>

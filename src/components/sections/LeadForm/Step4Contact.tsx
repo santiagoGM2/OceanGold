@@ -294,7 +294,7 @@ export function Step4Contact() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="gold-cta inline-flex items-center justify-center gap-3 px-9 md:px-10 py-4 border border-accent-gold bg-accent-gold text-surface-0 font-sans font-medium text-[0.72rem] tracking-[0.24em] uppercase hover:bg-gold-l transition-colors duration-300 cursor-pointer disabled:opacity-60 disabled:cursor-wait rounded-sm shadow-[0_8px_24px_oklch(0%_0_0/0.3)]"
+            className="gold-cta inline-flex items-center justify-center gap-3 px-9 md:px-10 py-4 border border-accent-gold bg-accent-gold text-surface-0 font-sans font-medium text-[0.72rem] tracking-[0.25em] uppercase hover:bg-gold-l transition-colors duration-300 cursor-pointer disabled:opacity-60 disabled:cursor-wait rounded-sm shadow-[0_8px_24px_oklch(0%_0_0/0.3)]"
           >
             {isSubmitting ? (
               <>
