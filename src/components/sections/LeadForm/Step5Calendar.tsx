@@ -1,111 +1,42 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+/**
+ * Confirmación final del flujo de diagnóstico premium.
+ *
+ * Reemplaza al embed del calendario GHL. La conversión real ocurre al hacer
+ * clic en el CTA de WhatsApp: abrimos un `wa.me` con mensaje pre-rellenado
+ * que incluye el nombre y el sentimiento capturados en el quiz, de modo que
+ * el asesor recibe contexto antes del primer mensaje del cliente.
+ *
+ * Se mantiene el export `Step5Calendar` para no tocar el routing del
+ * `LeadForm` index — el step id "calendar" sigue siendo el destino final del
+ * Step4, pero la UI ya no muestra un calendario.
+ */
+
+import { useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { Check, MessageCircle } from "lucide-react";
 import { useLeadForm } from "./leadFormContext";
-import {
-  GHL_CALENDAR_URL,
-  buildPostBookingWhatsAppMessage,
-  buildWhatsAppUrl,
-} from "@/lib/constants";
+import { buildPostFormWhatsAppMessage, buildWhatsAppUrl } from "@/lib/constants";
 import { track } from "@/lib/analytics";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-/**
- * Calendar embed de GoHighLevel.
- * - iframe con `data-src` lazy + form_embed.js de GHL con next/script lazyOnload.
- * - Pre-fill via query string (name/email/phone).
- * - Listener `postMessage` para capturar el booking confirmado y disparar WhatsApp redirect.
- */
 export function Step5Calendar() {
   const reduce = useReducedMotion();
-  const { state, setBooking } = useLeadForm();
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const [iframeLoaded, setIframeLoaded] = useState(false);
-  const redirectedRef = useRef(false);
+  const { state } = useLeadForm();
+  const trackedRef = useRef(false);
 
-  // URL con prefill.
-  const url = new URL(GHL_CALENDAR_URL);
-  if (state.draft.name) url.searchParams.set("first_name", state.draft.name.split(" ")[0]);
-  if (state.draft.name) url.searchParams.set("last_name", state.draft.name.split(" ").slice(1).join(" "));
-  if (state.draft.email) url.searchParams.set("email", state.draft.email);
-  if (state.draft.phone) url.searchParams.set("phone", state.draft.phone);
-  const calendarSrc = url.toString();
-
-  // Listener postMessage de GHL para detectar booking confirmado.
   useEffect(() => {
-    const onMessage = (e: MessageEvent) => {
-      try {
-        const data: unknown = e.data;
-        if (!data || typeof data !== "object") return;
-        const obj = data as Record<string, unknown>;
-        // GHL emite eventos del tipo { type: "appointment.scheduled", payload: {...} }
-        // o messages más cortos con { event: "form_submission_success" }.
-        const type =
-          (typeof obj.type === "string" && obj.type) ||
-          (typeof obj.event === "string" && obj.event) ||
-          "";
-        const looksLikeBooking =
-          /appointment|booking|form_submission/i.test(type);
-        if (!looksLikeBooking) return;
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+    track("form_completed_premium_ready");
+  }, []);
 
-        // Intentar extraer day/time del payload.
-        const payload = (obj.payload ?? obj) as Record<string, unknown>;
-        const rawDate =
-          (typeof payload.startTime === "string" && payload.startTime) ||
-          (typeof payload.appointmentDate === "string" && payload.appointmentDate) ||
-          (typeof payload.start === "string" && payload.start) ||
-          "";
-        let day: string | null = null;
-        let time: string | null = null;
-        if (rawDate) {
-          const d = new Date(rawDate);
-          if (!Number.isNaN(d.getTime())) {
-            day = d.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long" });
-            time = d.toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" });
-          }
-        }
-        if (day) setBooking(day, time ?? "");
-        track("booking_completed", { day: day ?? undefined, time: time ?? undefined });
-
-        // Redirect a WhatsApp con mensaje compuesto.
-        if (!redirectedRef.current) {
-          redirectedRef.current = true;
-          const message = buildPostBookingWhatsAppMessage({
-            feeling: state.draft.feeling,
-            day,
-            time,
-          });
-          const waUrl = buildWhatsAppUrl(message);
-          track("whatsapp_redirect");
-          // Pequeño delay para que el usuario vea la confirmación dentro del iframe.
-          setTimeout(() => {
-            window.location.href = waUrl;
-          }, 2500);
-        }
-      } catch {
-        // Ignorar mensajes que no sean del calendar.
-      }
-    };
-    window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
-  }, [setBooking, state.draft.feeling]);
-
-  // Manual redirect fallback si GHL no emite postMessage.
-  const fallbackRedirect = () => {
-    if (redirectedRef.current) return;
-    redirectedRef.current = true;
-    const message = buildPostBookingWhatsAppMessage({
-      feeling: state.draft.feeling,
-      day: state.bookingDay,
-      time: state.bookingTime,
-    });
-    const waUrl = buildWhatsAppUrl(message);
-    track("whatsapp_redirect");
-    window.location.href = waUrl;
-  };
+  const message = buildPostFormWhatsAppMessage({
+    name: state.draft.name,
+  });
+  const waUrl = buildWhatsAppUrl(message);
 
   return (
     <motion.div
@@ -114,58 +45,96 @@ export function Step5Calendar() {
       animate={{ opacity: 1, y: 0 }}
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
       transition={{ duration: reduce ? 0 : 0.4, ease: EASE }}
+      className="flex flex-col items-center text-center py-4 md:py-8"
     >
-      <h3 className="font-serif text-[clamp(1.6rem,2.4vw,2.2rem)] text-ivory font-light leading-[1.2] mb-3">
-        Elige tu horario
-      </h3>
-      <p className="text-text-muted font-light max-w-xl mb-8">
-        Reserva 10–20 minutos contigo. Atendemos lunes a sábado, 12:00 PM – 7:00 PM (Miami).
-      </p>
-
-      <div className="relative w-full min-h-[640px] border border-border-subtle bg-surface-1/40">
-        <iframe
-          ref={iframeRef}
-          src={calendarSrc}
-          title="Agenda tu diagnóstico DuJoyero"
-          className="w-full min-h-[640px] block"
-          style={{ border: "none" }}
-          onLoad={() => {
-            setIframeLoaded(true);
-            track("calendar_loaded");
+      {/* Check dorado con halo radial — entrada en dos tiempos
+          (anillo escala, luego el ✓ aparece). Refuerza la sensación de
+          "completado" sin recurrir a efectos confeti que se sienten genéricos. */}
+      <motion.div
+        initial={reduce ? { scale: 1, opacity: 1 } : { scale: 0.7, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: reduce ? 0 : 0.1, duration: 0.6, ease: EASE }}
+        className="relative mb-9"
+      >
+        <span
+          aria-hidden
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, oklch(65% 0.096 72 / 0.22) 0%, transparent 65%)",
+            transform: "scale(1.45)",
           }}
         />
-        {!iframeLoaded && (
-          <div
-            aria-hidden
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          >
-            <span className="text-text-muted text-sm font-light italic">
-              Cargando calendario…
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <p className="text-[0.78rem] text-text-muted font-light italic max-w-md">
-          Tras confirmar tu hora te conectaremos por WhatsApp para coordinar la
-          recepción de la pieza.
-        </p>
-        <button
-          type="button"
-          onClick={fallbackRedirect}
-          className="text-[0.65rem] tracking-[0.22em] uppercase text-accent-gold hover:underline cursor-pointer self-start sm:self-auto"
+        <div
+          className="relative w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-accent-gold flex items-center justify-center bg-accent-gold/[0.08]"
+          style={{ boxShadow: "0 0 24px oklch(65% 0.096 72 / 0.28)" }}
         >
-          Ya agendé, ir a WhatsApp →
-        </button>
-      </div>
+          <motion.span
+            initial={reduce ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: reduce ? 0 : 0.4, duration: 0.45, ease: EASE }}
+            className="inline-flex"
+          >
+            <Check
+              className="w-12 h-12 md:w-14 md:h-14 text-accent-gold"
+              strokeWidth={2.2}
+              aria-hidden
+            />
+          </motion.span>
+        </div>
+      </motion.div>
 
-      {/* form_embed.js de GHL (necesario para que algunos eventos del iframe funcionen). */}
-      <Script
-        src="https://link.msgsndr.com/js/form_embed.js"
-        strategy="lazyOnload"
-      />
+      <motion.h3
+        initial={reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: reduce ? 0 : 0.55, duration: 0.55, ease: EASE }}
+        className="font-serif text-[clamp(1.9rem,3.6vw,2.7rem)] text-ivory font-light leading-[1.12] tracking-[-0.012em] mb-5 max-w-2xl"
+      >
+        Tu diagnóstico está en nuestras manos.
+      </motion.h3>
+
+      <motion.p
+        initial={reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: reduce ? 0 : 0.7, duration: 0.55, ease: EASE }}
+        className="text-text-default font-light text-[clamp(1rem,1.4vw,1.1rem)] leading-[1.8] max-w-xl mb-10"
+      >
+        Te conectamos con uno de nuestros maestros joyeros para coordinar los
+        siguientes pasos. Pulsa el botón y te abrimos una conversación directa
+        por WhatsApp.
+      </motion.p>
+
+      <motion.div
+        initial={reduce ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: reduce ? 0 : 0.85, duration: 0.55, ease: EASE }}
+        whileHover={reduce ? undefined : { scale: 1.015 }}
+        whileTap={reduce ? undefined : { scale: 0.985 }}
+      >
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-cta-section="step5_success"
+          data-cta-label="whatsapp_premium"
+          onClick={() => track("whatsapp_redirect")}
+          className="cta-pulse gold-cta inline-flex items-center gap-3.5 px-8 md:px-12 py-4 md:py-5 border border-accent-gold bg-accent-gold text-surface-0 font-sans text-[0.78rem] md:text-[0.84rem] tracking-[0.22em] uppercase hover:bg-gold-l transition-colors duration-300 rounded-sm"
+        >
+          <MessageCircle className="w-5 h-5 flex-shrink-0" strokeWidth={2} aria-hidden />
+          Escribirnos por WhatsApp
+          <span aria-hidden>→</span>
+        </a>
+      </motion.div>
+
+      <motion.p
+        initial={reduce ? { opacity: 1 } : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: reduce ? 0 : 1.05, duration: 0.5, ease: EASE }}
+        className="text-[0.78rem] text-text-muted font-light italic mt-9 max-w-md leading-[1.7]"
+      >
+        Te respondemos en minutos. Coordinamos los detalles de la recepción
+        de tu pieza por el mismo canal.
+      </motion.p>
     </motion.div>
   );
 }
-

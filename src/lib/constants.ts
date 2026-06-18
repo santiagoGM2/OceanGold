@@ -35,11 +35,9 @@ export const BUSINESS = {
   ],
 } as const;
 
-export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "10000000000";
-
-export const GHL_CALENDAR_URL =
-  process.env.NEXT_PUBLIC_GHL_CALENDAR_URL ??
-  "https://api.leadconnectorhq.com/widget/booking/gSMbRpfe4CCHqTBkOQZA";
+// Número real de DuJoyero Miami: +1 (305) 413-3739 — formato wa.me E.164 sin "+".
+export const WHATSAPP_NUMBER =
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "13054133739";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://oceangold.example.com";
@@ -207,18 +205,16 @@ export const COPY = {
 } as const;
 
 /**
- * Construye el mensaje de WhatsApp final post-agendamiento.
- * Si no se captura día/hora del callback de GHL, usa fallback genérico.
+ * Mensaje de WhatsApp que se abre tras completar el formulario. Corto y
+ * directo — el asesor ya tiene en el CRM todo el contexto (feeling, foto,
+ * quiz), así que el mensaje sólo necesita iniciar la conversación.
  */
-export function buildPostBookingWhatsAppMessage(opts: {
-  feeling?: Feeling | null;
-  day?: string | null;
-  time?: string | null;
+export function buildPostFormWhatsAppMessage(opts: {
+  name?: string | null;
 }): string {
-  const feeling = opts.feeling ?? "renacido";
-  const when =
-    opts.day && opts.time ? `para ${opts.day} a las ${opts.time}` : "para mi cita confirmada";
-  return `Hola, acabo de agendar mi diagnóstico ${when}. Si pudiera recuperar el brillo de mi joya mañana con un chasquido de dedos, me sentiría ${feeling} de nuevo. ¿Qué fotos adicionales necesitan?`;
+  const firstName = (opts.name ?? "").trim().split(/\s+/)[0] || "";
+  const greeting = firstName ? `Hola, soy ${firstName}.` : "Hola.";
+  return `${greeting} Acabo de completar mi diagnóstico premium en DuJoyero y me gustaría activar mi acceso preferencial.`;
 }
 
 export function buildWhatsAppUrl(message: string): string {

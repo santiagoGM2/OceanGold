@@ -16,7 +16,10 @@
  * (transform + opacity únicamente).
  */
 
-const PARTICLE_COUNT = 28;
+// 18 partículas en desktop (bajado desde 28 — Fase F.7 perf). Aún se siente
+// la presencia ambiental sin engordar el DOM ni el budget de animación CSS.
+// Mobile: 0 (las partículas se ocultan via media query en globals.css igual).
+const PARTICLE_COUNT = 18;
 const PARTICLE_COUNT_MOBILE = 0;
 
 type Particle = {

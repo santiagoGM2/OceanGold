@@ -23,8 +23,7 @@ type EventMap = {
   aha_reveal_continued: undefined;
   feeling_selected: { feeling: Feeling };
   lead_submitted_to_ghl: { success: boolean; retry_count: number };
-  calendar_loaded: undefined;
-  booking_completed: { day?: string; time?: string };
+  form_completed_premium_ready: undefined;
   whatsapp_redirect: undefined;
 };
 

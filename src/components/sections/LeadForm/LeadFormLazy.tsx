@@ -17,14 +17,14 @@ function LeadFormSkeleton() {
     >
       <div className="max-w-7xl mx-auto">
         <span className="block text-[0.67rem] tracking-[0.4em] uppercase text-accent-gold mb-5 font-light">
-          Diagnóstico gratuito · {BUSINESS.diagnosticDuration}
+          Diagnóstico gratuito de {BUSINESS.diagnosticDuration}
         </span>
         <h2 className="font-serif text-[clamp(2rem,4vw,3.5rem)] text-ivory font-light leading-[1.08] tracking-[0.02em] mb-3">
           Tu joya merece su siguiente capítulo
         </h2>
         <p className="text-text-muted font-light max-w-2xl mb-10">
-          Te tomará 2 minutos completar este formulario. Al final agendas tu cita
-          virtual o presencial — la decides tú.
+          Te tomará 2 minutos. Al final activas tu acceso preferencial y un
+          asesor te contacta por WhatsApp para coordinar los próximos pasos.
         </p>
 
         <div className="border border-border-subtle bg-surface-1/60 backdrop-blur-sm p-6 md:p-10 min-h-[480px] md:min-h-[560px] flex items-center justify-center">

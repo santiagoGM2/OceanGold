@@ -9,7 +9,7 @@ const STEP_LABELS: Record<StepId, string> = {
   aha: "Análisis",
   quiz: "Quiz",
   contact: "Contacto",
-  calendar: "Agendar",
+  calendar: "Listo",
 };
 
 export function ProgressBar({ current }: { current: StepId }) {

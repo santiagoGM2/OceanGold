@@ -29,23 +29,30 @@ export default function HomePage() {
         <LeadForm />
         <Authority />
 
-        <footer className="relative px-6 md:px-14 py-10 border-t border-border-subtle">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <span
-              className="text-champagne font-normal tracking-[0.02em] text-[1.2rem] leading-none"
-              style={{ fontFamily: "var(--font-wordmark)" }}
-            >
-              {BUSINESS.name}
-            </span>
-            <span className="text-xs text-text-muted text-center md:text-right">
-              {BUSINESS.address.street} · {BUSINESS.address.neighborhood},{" "}
-              {BUSINESS.address.region} · © {new Date().getFullYear()}{" "}
+        <footer className="relative px-6 md:px-14 py-12 border-t border-border-subtle">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 max-w-7xl mx-auto">
+            <div>
               <span
-                className="text-champagne"
-                style={{ fontFamily: "var(--font-wordmark)", fontSize: "0.95rem" }}
+                className="block text-champagne font-normal tracking-[0.02em] text-[1.35rem] leading-none mb-3"
+                style={{ fontFamily: "var(--font-wordmark)" }}
               >
                 {BUSINESS.name}
               </span>
+              <span className="block text-[0.78rem] text-text-muted font-light leading-[1.65]">
+                {BUSINESS.address.street}
+                <br />
+                {BUSINESS.address.neighborhood}, {BUSINESS.address.region}
+              </span>
+            </div>
+            <span className="text-[0.7rem] text-text-muted/80 font-light tracking-[0.06em] md:text-right">
+              © {new Date().getFullYear()}{" "}
+              <span
+                className="text-champagne"
+                style={{ fontFamily: "var(--font-wordmark)", fontSize: "0.85rem" }}
+              >
+                {BUSINESS.name}
+              </span>
+              . Todos los derechos reservados.
             </span>
           </div>
         </footer>

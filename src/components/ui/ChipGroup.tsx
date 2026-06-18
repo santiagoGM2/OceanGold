@@ -3,14 +3,17 @@
 /**
  * ChipGroup — primitivo de selección por chips, single o multi.
  *
- * - `multiSelect`: true para multi (toggle), false para single (radio-like).
- * - `hasOther`: añade un chip "Otro" al final; cuando se selecciona,
- *   despliega un input de texto libre debajo del grupo.
- * - Microinteracciones Emil Kowalski: `whileTap` scale 0.97, `whileHover`
- *   scale 1.02, easing `cubic-bezier(0.32, 0.72, 0, 1)` a 200ms.
- * - Accesibilidad: cada chip es `<button role="button" aria-pressed>`.
- *   Soporta keyboard nav nativa (Tab + Space/Enter).
- * - Respeta `prefers-reduced-motion`.
+ * Selección dinámica (Fase F.8): cuando un chip se selecciona, se eleva
+ * (y: -3) con un drop-shadow direccional dorado, se rellena con bg gold-soft,
+ * y aparece un disco dorado con ✓ a la izquierda (escala + fade). El padding
+ * izquierdo se anima para dejar espacio al disco sin saltos de layout.
+ *
+ * Microinteracciones Emil Kowalski: `whileTap` scale 0.96, `whileHover`
+ * scale 1.02, easing `cubic-bezier(0.32, 0.72, 0, 1)` a 220ms.
+ *
+ * Accesibilidad: cada chip es `<button aria-pressed>`. Soporta keyboard nav
+ * nativa (Tab + Space/Enter). Respeta `prefers-reduced-motion` deshabilitando
+ * el lift y el scale.
  */
 
 import { useId, useRef, useEffect } from "react";
@@ -20,6 +23,7 @@ import {
   useReducedMotion,
   type Variants,
 } from "motion/react";
+import { Check } from "lucide-react";
 
 const OTRO = "Otro";
 const EMIL_EASE = [0.32, 0.72, 0, 1] as const;
@@ -69,12 +73,10 @@ export function ChipGroup({
       const next = isSelected(opt)
         ? value.filter((v) => v !== opt)
         : [...value, opt];
-      // Si se deselecciona "Otro", limpiar el texto libre.
       const nextOther = opt === OTRO && !next.includes(OTRO) ? "" : otherText;
       onChange(next, nextOther);
       return;
     }
-    // Single-select: reemplazar.
     if (isSelected(opt)) {
       onChange([], opt === OTRO ? "" : otherText);
     } else {
@@ -85,15 +87,19 @@ export function ChipGroup({
   const allChips = hasOther ? [...options, OTRO] : options;
   const selectedCount = value.length;
 
+  // Combinamos variants rest/selected con whileHover/whileTap. Motion
+  // interpola entre el estado base (selected ? "selected" : "rest") y
+  // hover/tap manteniendo las transformaciones de cada uno (y + scale).
   const chipVariants: Variants = {
-    rest: { scale: 1 },
+    rest: { y: 0, scale: 1 },
+    selected: { y: reduce ? 0 : -3, scale: 1 },
     hover: reduce ? {} : { scale: 1.02 },
-    tap: reduce ? {} : { scale: 0.97 },
+    tap: reduce ? {} : { scale: 0.96 },
   };
 
   return (
     <fieldset className="block">
-      <legend className="block font-serif text-text-strong text-[clamp(1.1rem,1.6vw,1.35rem)] mb-4 leading-snug">
+      <legend className="block font-serif text-text-strong text-[clamp(1.1rem,1.6vw,1.35rem)] mb-5 leading-snug">
         {question}
         {required && (
           <span className="ml-1.5 text-accent-gold" aria-hidden="true">
@@ -115,25 +121,53 @@ export function ChipGroup({
               aria-label={`${selected ? "Deseleccionar" : "Seleccionar"} ${label}`}
               variants={chipVariants}
               initial="rest"
+              animate={selected ? "selected" : "rest"}
               whileHover="hover"
               whileTap="tap"
-              transition={{ duration: 0.2, ease: EMIL_EASE }}
+              transition={{ duration: 0.22, ease: EMIL_EASE }}
               className={
-                "inline-flex items-center px-5 py-3 rounded-lg border-[1.5px] " +
-                "text-[0.92rem] font-light tracking-wide cursor-pointer " +
-                "transition-[background-color,border-color,box-shadow,color] duration-200 " +
+                "relative inline-flex items-center rounded-lg border-[1.5px] " +
+                "text-[0.92rem] font-light tracking-wide cursor-pointer py-3 " +
+                "transition-[background-color,border-color,box-shadow,color,padding-left,padding-right] duration-200 " +
                 (selected
-                  ? "border-accent-gold bg-accent-gold-soft text-text-strong " +
-                    "shadow-[0_0_22px_oklch(65%_0.096_72/0.25)]"
-                  : "border-border-subtle bg-surface-1/60 text-text-muted " +
+                  ? "pl-10 pr-5 border-accent-gold bg-accent-gold-soft text-ivory " +
+                    "shadow-[0_10px_28px_oklch(65%_0.096_72/0.32),0_2px_6px_oklch(65%_0.096_72/0.2)]"
+                  : "px-5 border-border-subtle bg-surface-1/60 text-text-muted " +
                     "hover:border-accent-gold/55 hover:text-text-strong")
               }
               style={{
-                // Garantiza que el bezier Emil aplique aún cuando Tailwind
-                // genere transition con su default ease.
                 transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)",
               }}
             >
+              {/* Disco dorado con ✓ — aparece con scale + opacity al seleccionar.
+                  Absolute para no contribuir al layout interno del chip. El
+                  padding-left animado en el chip reserva el espacio. */}
+              <AnimatePresence initial={false}>
+                {selected && (
+                  <motion.span
+                    key="check"
+                    initial={
+                      reduce
+                        ? { opacity: 1, scale: 1 }
+                        : { opacity: 0, scale: 0.3 }
+                    }
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={
+                      reduce
+                        ? { opacity: 0 }
+                        : { opacity: 0, scale: 0.3 }
+                    }
+                    transition={{ duration: 0.22, ease: EMIL_EASE }}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-accent-gold"
+                    aria-hidden
+                  >
+                    <Check
+                      className="w-[10px] h-[10px] text-surface-0"
+                      strokeWidth={3.5}
+                    />
+                  </motion.span>
+                )}
+              </AnimatePresence>
               {label}
             </motion.button>
           );
@@ -174,9 +208,10 @@ export function ChipGroup({
 
       {multiSelect && selectedCount > 0 && (
         <p
-          className="mt-3 text-[0.72rem] tracking-[0.18em] uppercase text-text-muted font-light"
+          className="mt-4 inline-flex items-center gap-2 text-[0.7rem] tracking-[0.22em] uppercase text-accent-gold font-medium"
           aria-live="polite"
         >
+          <span aria-hidden className="block w-4 h-px bg-accent-gold" />
           {selectedCount} seleccionada{selectedCount === 1 ? "" : "s"}
         </p>
       )}

@@ -87,20 +87,23 @@ export function HeroVideoBackground() {
         preload="none"
         poster={POSTER}
       />
-      {/* Capa 1: overlay dark malachite con gradient vertical fuerte */}
+      {/* Capa 1: overlay dark malachite — más oscuro en bordes (top/bottom)
+          para anclar el texto, y mantiene legibilidad sobre el video sin
+          sacrificar el shimmer del oro en el centro-derecha. */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, oklch(6.5% 0.018 158 / 0.85) 0%, oklch(6.5% 0.018 158 / 0.62) 38%, oklch(6.5% 0.018 158 / 0.6) 60%, oklch(6.5% 0.018 158 / 0.78) 100%)",
+            "linear-gradient(180deg, oklch(6.5% 0.018 158 / 0.92) 0%, oklch(6.5% 0.018 158 / 0.72) 38%, oklch(6.5% 0.018 158 / 0.7) 60%, oklch(6.5% 0.018 158 / 0.88) 100%)",
         }}
       />
-      {/* Capa 2: vignette radial interior */}
+      {/* Capa 2: vignette radial interior — más fuerte al borde para
+          enfocar el contenido central. */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 80% 70% at 30% 50%, transparent 0%, oklch(4% 0.015 158 / 0.35) 100%)",
+            "radial-gradient(ellipse 80% 70% at 30% 50%, transparent 0%, oklch(4% 0.015 158 / 0.5) 100%)",
         }}
       />
       {/* Capa 3: noise sutil — rompe la planitud del overlay */}

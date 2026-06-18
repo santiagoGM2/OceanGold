@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: `${BUSINESS.name} — ${BUSINESS.tagline}`,
-    template: `%s · ${BUSINESS.name}`,
+    template: `%s — ${BUSINESS.name}`,
   },
   description:
     "Reparación, transformación y personalización de joyas de autor en Miami, FL. Diagnóstico gratuito virtual o presencial. 23 años de oficio artesanal.",
@@ -103,9 +103,17 @@ export default function RootLayout({
       className={`${cinzel.variable} ${italiana.variable} ${jost.variable} antialiased`}
     >
       <head>
-        {/* El poster ya no es candidato LCP del Hero (Fase F.5.1 removió el
-            video del Hero). El poster ahora vive en la nueva sección
-            "El regalo perfecto", below-the-fold — sin preload. */}
+        {/* El poster del HeroVideoBackground es el LCP candidato actual en
+            móvil (el video tiene preload="none", pero el browser descarga el
+            poster siempre). Preload + fetchpriority="high" lo trae en paralelo
+            al HTML inicial y desbloquea el LCP varios cientos de ms antes.
+            ImageResponse types preferiría <link as="image"> en head. */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-fundido-poster.webp"
+          fetchPriority="high"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }}

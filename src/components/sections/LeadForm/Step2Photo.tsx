@@ -194,12 +194,11 @@ export function Step2Photo() {
             }}
             className="inline-flex w-full sm:w-auto items-center justify-center gap-3 px-6 sm:px-8 py-3.5 border border-border-subtle hover:border-accent-gold/70 text-text-muted hover:text-accent-gold font-sans text-[0.7rem] tracking-[0.22em] uppercase transition-colors duration-200 cursor-pointer rounded-md text-center"
           >
-            <span>No tengo la foto ahora · Continuar sin foto</span>
+            <span>Continuar sin foto por ahora</span>
             <span aria-hidden>→</span>
           </button>
           <p className="mt-3 text-[0.75rem] text-text-muted/80 font-light italic leading-relaxed max-w-md">
-            Puedes enviárnosla más tarde por WhatsApp después de agendar tu
-            diagnóstico.
+            Puedes enviárnosla más tarde por WhatsApp.
           </p>
         </div>
       )}
