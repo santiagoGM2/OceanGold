@@ -1,6 +1,10 @@
 /**
  * Helpers para enviar leads a GoHighLevel.
- * - Mapper que garantiza `service` en lowercase sin tildes (contract con GHL).
+ * - Mapper que traduce el `ServiceId` interno (lowercase sin tildes) a la
+ *   grafía esperada por el CRM (Title Case con tildes en castellano).
+ *   El valor interno NO cambia — el dispatcher del Quiz, feelingMapper y
+ *   demás consumidores siguen leyendo el ID raw. La traducción ocurre
+ *   únicamente en este punto, justo al construir el payload del webhook.
  * - Retry 3x con backoff exponencial.
  * - `feeling` se duplica en raíz Y en quizAnswers (intencional, ver README).
  * - `quizAnswers` se envía como STRING JSON serializado.
@@ -9,20 +13,21 @@ import type { Feeling, ServiceId } from "@/lib/constants";
 import type { LeadPayload, QuizAnswers } from "@/types/lead";
 
 /**
- * Los IDs en `SERVICES` ya están en lowercase sin tildes, pero validamos
- * por si en el futuro se renombran.
+ * IDs internos → grafía esperada por el CRM. Cualquier cambio aquí afecta
+ * solo lo que sale por el webhook. Si añades un servicio nuevo en
+ * `SERVICES`, TypeScript te obliga a registrarlo aquí también.
  */
-const SERVICE_MAP: Record<ServiceId, string> = {
-  reparacion: "reparacion",
-  transformacion: "transformacion",
-  personalizacion: "personalizacion",
-  mantenimiento: "mantenimiento",
-  armado: "armado",
-  diagnostico: "diagnostico",
+const SERVICE_DISPLAY: Record<ServiceId, string> = {
+  reparacion: "Reparación",
+  transformacion: "Transformación",
+  personalizacion: "Personalización",
+  mantenimiento: "Mantenimiento",
+  armado: "Armado",
+  diagnostico: "Diagnóstico",
 };
 
 export function normalizeService(service: ServiceId): string {
-  return SERVICE_MAP[service] ?? service;
+  return SERVICE_DISPLAY[service] ?? service;
 }
 
 export function buildGhlPayload(input: {
